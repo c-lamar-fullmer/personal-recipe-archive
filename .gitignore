@@ -1,0 +1,15 @@
+# Ignore compiled Java code
+backend/target/
+backend/.mvn/
+.gradle/
+build/
+
+# Ignore local IDE settings
+.idea/
+.vscode/
+*.iml
+*.sublime-project
+
+# Ignore operating system files
+.DS_Store
+Thumbs.db
