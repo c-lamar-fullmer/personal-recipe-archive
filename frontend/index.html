@@ -7,12 +7,63 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Personal Recipe Archive</h1>
-    <p>Welcome to your recipe archive!</p>
-    
-    <div id="recipe-container">
-        <p>Loading recipes...</p>
-    </div>
+
+    <header id="main-header">
+        <h1>Personal Recipe Archive</h1>
+        <blockquote id="motivational-quote">
+            "This is a where you will see a motivational quote." — Unknown
+        </blockquote>
+    </header>
+
+    <main>
+        <div id="connection-status">Connecting...</div>
+        
+        <section id="search-section">
+            <input 
+                type="text" 
+                id="search-bar" 
+                placeholder="search..."
+            >
+        </section>
+
+        <section id="filter-section">
+            <button class="filter-chip active" data-category="all">all</button>
+            <button class="filter-chip" data-category="breakfast">breakfast</button>
+            <button class="filter-chip" data-category="dessert">dessert</button>
+            <button class="filter-chip" data-category="dinner">dinner</button>
+            <button class="filter-chip" data-category="main_course">main course</button>
+            <button class="filter-chip" data-category="side">side</button>
+        </section>
+
+        <section id="recipe-container">
+            
+            <article class="recipe-card">
+                <h3>Classic Chocolate Chip Cookies</h3>
+                <p class="recipe-category">Dessert</p>
+                <p class="recipe-description">Soft, chewy cookies packed with chocolate chips.</p>
+                <a href="#" class="view-recipe-btn">View Details</a>
+            </article>
+
+            <article class="recipe-card">
+                <h3>Fluffy Pancakes</h3>
+                <p class="recipe-category">Breakfast</p>
+                <p class="recipe-description">Easy, classic homemade pancakes perfect for Saturday morning.</p>
+                <a href="#" class="view-recipe-btn">View Details</a>
+            </article>
+
+            <article class="recipe-card">
+                <h3>Creamy Garlic Pasta</h3>
+                <p class="recipe-category">Dinner</p>
+                <p class="recipe-description">A quick and comforting pasta dish ready in under 20 minutes.</p>
+                <a href="#" class="view-recipe-btn">View Details</a>
+            </article>
+
+        </section>
+    </main>
+
+    <footer id="main-footer">
+        <button id="edit-mode-btn">Edit Recipes</button>
+    </footer>
 
     <script src="app.js"></script>
 </body>
