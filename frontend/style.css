@@ -1,12 +1,230 @@
-body {
-    font-family: sans-serif;
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 0 20px;
-    background-color: #fafafa;
-    color: #333;
+/* ==========================================================================
+   1. Base Setup & Variables
+   ========================================================================== */
+:root {
+    --primary-color: #e67e22;    /* Warm Orange */
+    --primary-hover: #d35400;    /* Darker Orange */
+    --bg-color: #f9f9f9;         /* Off-white */
+    --card-bg: #ffffff;          /* Pure White */
+    --text-main: #2c3e50;        /* Dark Slate */
+    --text-muted: #7f8c8d;       /* Cool Gray */
+    --border-color: #e2e8f0;     /* Light Border Gray */
 }
 
-h1 {
-    color: #d35400;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;                     /* Allows content to stretch, keeping footer at bottom */
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* ==========================================================================
+   2. Header & Status Style
+   ========================================================================== */
+#main-header {
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    text-align: center;
+    padding: 30px 20px;
+}
+
+#main-header h1 {
+    color: var(--primary-hover);
+    font-size: 2.2rem;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+#motivational-quote {
+    font-style: italic;
+    color: var(--text-muted);
+    font-size: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#connection-status {
+    text-align: center;
+    margin: 15px 0;
+    font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   3. Search Bar Style
+   ========================================================================== */
+#search-section {
+    margin-bottom: 25px;
+}
+
+#search-bar {
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 30px;         /* Rounded pill style */
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#search-bar:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.15);
+}
+
+/* ==========================================================================
+   4. Category Filter Chips
+   ========================================================================== */
+#filter-section {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    overflow-x: auto;            /* Allows chips to scroll sideways on small mobile screens */
+    padding-bottom: 5px;
+}
+
+/* Hide scrollbar for cleaner look on mobile chips */
+#filter-section::-webkit-scrollbar {
+    display: none;
+}
+
+.filter-chip {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 8px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.9rem;
+    white-space: nowrap;         /* Keeps text on one line */
+    transition: all 0.2s ease;
+}
+
+.filter-chip:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.filter-chip.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #ffffff;
+}
+
+/* ==========================================================================
+   5. Scrollable Recipe Card Container (CSS Grid)
+   ========================================================================== */
+#recipe-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.recipe-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.recipe-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+}
+
+.recipe-card h3 {
+    font-size: 1.2rem;
+    color: var(--text-main);
+    margin-bottom: 8px;
+}
+
+.recipe-category {
+    display: inline-block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: var(--primary-color);
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+
+.recipe-description {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    flex-grow: 1;                /* Pushes the button to the absolute bottom of the card */
+}
+
+.view-recipe-btn {
+    display: block;
+    text-align: center;
+    background-color: #f1f5f9;
+    color: var(--text-main);
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.view-recipe-btn:hover {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+/* ==========================================================================
+   6. Footer & Center Admin/Edit Button
+   ========================================================================== */
+#main-footer {
+    background-color: var(--card-bg);
+    border-top: 1px solid var(--border-color);
+    padding: 15px;
+    display: flex;
+    justify-content: center;     /* Centers button horizontally */
+    align-items: center;
+    width: 100%;
+}
+
+#edit-mode-btn {
+    background-color: var(--text-main);
+    color: #ffffff;
+    border: none;
+    padding: 6px 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+#edit-mode-btn:hover {
+    background-color: #1a252f;  /* Slightly darker blue-gray */
+}
+
+#edit-mode-btn:active {
+    transform: scale(0.97);     /* Gives a tiny click feedback */
 }
