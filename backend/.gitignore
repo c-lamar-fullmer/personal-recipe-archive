@@ -3,3 +3,7 @@ target/
 *.iml
 .vscode/
 .DS_Store
+
+# Contains real DB credentials and the admin password — never commit this.
+# See application.properties.example for the template version instead.
+src/main/resources/application.properties

@@ -1,0 +1,23 @@
+# --- Database connection ---
+# 1. Create the database first (in psql or a GUI like pgAdmin):
+#      CREATE DATABASE recipe_archive;
+# 2. Copy this file to application.properties (same folder) and replace
+#    the placeholders below with your real local PostgreSQL credentials.
+#    application.properties is gitignored — it will NOT be committed.
+spring.datasource.url=jdbc:postgresql://localhost:5432/recipe_archive
+spring.datasource.username=YOUR_DB_USERNAME
+spring.datasource.password=YOUR_DB_PASSWORD
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# --- JPA / Hibernate ---
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+# --- Server ---
+server.port=8080
+
+# --- Admin protection (Phase 1: simple hardcoded check) ---
+# Pick your own password here after copying this file.
+admin.password=YOUR_ADMIN_PASSWORD
