@@ -36,7 +36,7 @@ public class RecipeController {
         return providedPassword != null && adminPassword.equals(providedPassword);
     }
 
-    // ------------------- READ (already working) -------------------
+    // ------------------- READ -------------------
 
     @GetMapping
     public List<Recipe> getRecipes(
@@ -45,8 +45,8 @@ public class RecipeController {
 
         if (search != null && !search.isBlank()) {
             return recipeRepository
-                    .findByTitleContainingIgnoreCaseOrIngredientsContainingIgnoreCaseOrTagsContainingIgnoreCase(
-                            search, search, search);
+                    .findByTitleContainingIgnoreCaseOrIngredientsContainingIgnoreCaseOrStepsContainingIgnoreCaseOrTagsContainingIgnoreCase(
+                            search, search, search, search);
         }
 
         if (category != null && !category.isBlank() && !category.equalsIgnoreCase("all")) {
