@@ -9,6 +9,7 @@
     --text-main: #2c3e50;        /* Dark Slate */
     --text-muted: #7f8c8d;       /* Cool Gray */
     --border-color: #e2e8f0;     /* Light Border Gray */
+    --danger-color: #c0392b;     /* For delete/error states */
 }
 
 * {
@@ -28,7 +29,7 @@ body {
 }
 
 main {
-    flex: 1;                     /* Allows content to stretch, keeping footer at bottom */
+    flex: 1;
     width: 100%;
     max-width: 900px;
     margin: 0 auto;
@@ -82,7 +83,7 @@ main {
     padding: 14px 20px;
     font-size: 1rem;
     border: 2px solid var(--border-color);
-    border-radius: 30px;         /* Rounded pill style */
+    border-radius: 30px;
     outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -99,11 +100,10 @@ main {
     display: flex;
     gap: 10px;
     margin-bottom: 30px;
-    overflow-x: auto;            /* Allows chips to scroll sideways on small mobile screens */
+    overflow-x: auto;
     padding-bottom: 5px;
 }
 
-/* Hide scrollbar for cleaner look on mobile chips */
 #filter-section::-webkit-scrollbar {
     display: none;
 }
@@ -117,7 +117,7 @@ main {
     cursor: pointer;
     font-weight: 500;
     font-size: 0.9rem;
-    white-space: nowrap;         /* Keeps text on one line */
+    white-space: nowrap;
     transition: all 0.2s ease;
 }
 
@@ -179,7 +179,7 @@ main {
     font-size: 0.9rem;
     color: var(--text-muted);
     margin-bottom: 20px;
-    flex-grow: 1;                /* Pushes the button to the absolute bottom of the card */
+    flex-grow: 1;
 }
 
 .view-recipe-btn {
@@ -286,14 +286,231 @@ main {
 }
 
 /* ==========================================================================
-   7. Footer & Center Admin/Edit Button
+   7. Admin — shared section styling
+   ========================================================================== */
+.admin-section {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 40px;
+}
+
+.admin-header-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.exit-edit-btn {
+    background-color: #f1f5f9;
+    color: var(--text-main);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.exit-edit-btn:hover {
+    background-color: var(--text-main);
+    color: #ffffff;
+}
+
+.admin-error {
+    color: var(--danger-color);
+    font-size: 0.85rem;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+/* ----- Admin login ----- */
+#admin-login label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+#admin-password-input {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    outline: none;
+    margin-bottom: 14px;
+}
+
+#admin-password-input:focus {
+    border-color: var(--primary-color);
+}
+
+#admin-submit-btn {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#admin-submit-btn:hover {
+    background-color: var(--primary-hover);
+}
+
+/* ----- Admin panel (recipe management list) ----- */
+#add-recipe-btn {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 12px;
+}
+
+#add-recipe-btn:hover {
+    background-color: var(--primary-hover);
+}
+
+.admin-hint {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+}
+
+.admin-recipe-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.admin-edit-link {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.admin-edit-link:hover {
+    color: var(--primary-hover);
+}
+
+/* ----- Admin add/edit form ----- */
+#admin-form-heading {
+    color: var(--primary-hover);
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+}
+
+#admin-form label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--text-muted);
+    margin-top: 16px;
+    margin-bottom: 6px;
+}
+
+#admin-form input[type="text"],
+#admin-form select,
+#admin-form textarea {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    outline: none;
+    font-family: inherit;
+}
+
+#admin-form input[type="text"]:focus,
+#admin-form select:focus,
+#admin-form textarea:focus {
+    border-color: var(--primary-color);
+}
+
+#admin-form textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+#admin-form-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+#form-save-btn {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#form-save-btn:hover {
+    background-color: var(--primary-hover);
+}
+
+#form-cancel-btn {
+    background-color: #f1f5f9;
+    color: var(--text-main);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#form-cancel-btn:hover {
+    background-color: #e2e8f0;
+}
+
+#form-delete-btn {
+    display: block;
+    background-color: #ffffff;
+    color: var(--danger-color);
+    border: 2px solid var(--danger-color);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 16px;
+}
+
+#form-delete-btn:hover {
+    background-color: var(--danger-color);
+    color: #ffffff;
+}
+
+/* ==========================================================================
+   8. Footer & Center Admin/Edit Button
    ========================================================================== */
 #main-footer {
     background-color: var(--card-bg);
     border-top: 1px solid var(--border-color);
     padding: 15px;
     display: flex;
-    justify-content: center;     /* Centers button horizontally */
+    justify-content: center;
     align-items: center;
     width: 100%;
 }
@@ -311,9 +528,9 @@ main {
 }
 
 #edit-mode-btn:hover {
-    background-color: #1a252f;  /* Slightly darker blue-gray */
+    background-color: #1a252f;
 }
 
 #edit-mode-btn:active {
-    transform: scale(0.97);     /* Gives a tiny click feedback */
+    transform: scale(0.97);
 }
