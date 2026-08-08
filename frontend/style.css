@@ -35,6 +35,10 @@ main {
     padding: 20px;
 }
 
+.hidden {
+    display: none !important;
+}
+
 /* ==========================================================================
    2. Header & Status Style
    ========================================================================== */
@@ -197,7 +201,92 @@ main {
 }
 
 /* ==========================================================================
-   6. Footer & Center Admin/Edit Button
+   6. Recipe Detail View
+   ========================================================================== */
+#recipe-detail {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 40px;
+}
+
+#detail-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    background-color: var(--card-bg);
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+#back-btn {
+    background-color: #f1f5f9;
+    color: var(--text-main);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease;
+}
+
+#back-btn:hover {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+#detail-title {
+    font-size: 1.4rem;
+    color: var(--primary-hover);
+}
+
+.detail-block {
+    margin-bottom: 24px;
+}
+
+.detail-block h3 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+#detail-ingredients,
+#detail-steps {
+    padding-left: 22px;
+}
+
+#detail-ingredients li,
+#detail-steps li {
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+}
+
+#detail-tags {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+}
+
+#detail-url {
+    display: inline-block;
+    color: var(--primary-color);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+#detail-url:hover {
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   7. Footer & Center Admin/Edit Button
    ========================================================================== */
 #main-footer {
     background-color: var(--card-bg);

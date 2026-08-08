@@ -17,27 +17,62 @@
 
     <main>
         <div id="connection-status">Connecting...</div>
-        
-        <section id="search-section">
-            <input 
-                type="text" 
-                id="search-bar" 
-                placeholder="search..."
-            >
-        </section>
 
-        <section id="filter-section">
-            <button class="filter-chip active" data-category="all">all</button>
-            <button class="filter-chip" data-category="breakfast">breakfast</button>
-            <button class="filter-chip" data-category="dessert">dessert</button>
-            <button class="filter-chip" data-category="dinner">dinner</button>
-            <button class="filter-chip" data-category="main_course">main course</button>
-            <button class="filter-chip" data-category="side">side</button>
-        </section>
+        <!-- List view: search, filters, and the recipe grid.
+             Hidden while a recipe's detail view is open. -->
+        <div id="list-view">
+            <section id="search-section">
+                <input 
+                    type="text" 
+                    id="search-bar" 
+                    placeholder="search..."
+                >
+            </section>
 
-        <!-- Recipe cards are now rendered dynamically by app.js from the
-             backend API response — nothing hardcoded here anymore. -->
-        <section id="recipe-container"></section>
+            <section id="filter-section">
+                <button class="filter-chip active" data-category="all">all</button>
+                <button class="filter-chip" data-category="breakfast">breakfast</button>
+                <button class="filter-chip" data-category="dessert">dessert</button>
+                <button class="filter-chip" data-category="dinner">dinner</button>
+                <button class="filter-chip" data-category="main_course">main course</button>
+                <button class="filter-chip" data-category="side">side</button>
+            </section>
+
+            <!-- Recipe cards are rendered dynamically by app.js -->
+            <section id="recipe-container"></section>
+        </div>
+
+        <!-- Detail view: shown when a recipe's "View Details" is clicked.
+             Fixed back button + title at top, scrollable content below,
+             matching the wireframe layout. Hidden by default. -->
+        <section id="recipe-detail" class="hidden">
+            <div id="detail-header">
+                <button id="back-btn">&larr; Back</button>
+                <h2 id="detail-title"></h2>
+            </div>
+
+            <div id="detail-body">
+                <div id="detail-ingredients-block" class="detail-block">
+                    <h3>Ingredients</h3>
+                    <ul id="detail-ingredients"></ul>
+                </div>
+
+                <div id="detail-steps-block" class="detail-block">
+                    <h3>Steps</h3>
+                    <ol id="detail-steps"></ol>
+                </div>
+
+                <div id="detail-tags-block" class="detail-block">
+                    <h3>Tags</h3>
+                    <p id="detail-tags"></p>
+                </div>
+
+                <div id="detail-url-block" class="detail-block hidden">
+                    <h3>Source</h3>
+                    <a id="detail-url" href="#" target="_blank" rel="noopener">Open external recipe &rarr;</a>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer id="main-footer">
