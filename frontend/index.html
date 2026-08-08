@@ -18,8 +18,7 @@
     <main>
         <div id="connection-status">Connecting...</div>
 
-        <!-- List view: search, filters, and the recipe grid.
-             Hidden while a recipe's detail view is open. -->
+        <!-- List view: search, filters, and the recipe grid -->
         <div id="list-view">
             <section id="search-section">
                 <input 
@@ -38,13 +37,10 @@
                 <button class="filter-chip" data-category="side">side</button>
             </section>
 
-            <!-- Recipe cards are rendered dynamically by app.js -->
             <section id="recipe-container"></section>
         </div>
 
-        <!-- Detail view: shown when a recipe's "View Details" is clicked.
-             Fixed back button + title at top, scrollable content below,
-             matching the wireframe layout. Hidden by default. -->
+        <!-- Detail view: single recipe, read-only -->
         <section id="recipe-detail" class="hidden">
             <div id="detail-header">
                 <button id="back-btn">&larr; Back</button>
@@ -72,6 +68,67 @@
                     <a id="detail-url" href="#" target="_blank" rel="noopener">Open external recipe &rarr;</a>
                 </div>
             </div>
+        </section>
+
+        <!-- Admin: password gate -->
+        <section id="admin-login" class="hidden admin-section">
+            <div class="admin-header-row">
+                <button class="exit-edit-btn">Exit Editing Mode</button>
+            </div>
+            <label for="admin-password-input">Password</label>
+            <input type="password" id="admin-password-input">
+            <button id="admin-submit-btn">Submit</button>
+            <p id="admin-login-error" class="admin-error hidden">Incorrect password. Try again.</p>
+        </section>
+
+        <!-- Admin: recipe management list -->
+        <section id="admin-panel" class="hidden admin-section">
+            <div class="admin-header-row">
+                <button class="exit-edit-btn">Exit Editing Mode</button>
+            </div>
+            <button id="add-recipe-btn">+ Add new recipe</button>
+            <p class="admin-hint">Click on a recipe to edit/delete</p>
+            <div id="admin-recipe-list"></div>
+        </section>
+
+        <!-- Admin: add / edit recipe form -->
+        <section id="admin-form" class="hidden admin-section">
+            <div class="admin-header-row">
+                <button class="exit-edit-btn">Exit Editing Mode</button>
+            </div>
+            <h2 id="admin-form-heading">Add New Recipe</h2>
+
+            <label for="form-title">Title</label>
+            <input type="text" id="form-title">
+
+            <label for="form-category">Category</label>
+            <select id="form-category"></select>
+
+            <label for="form-source-type">Source</label>
+            <select id="form-source-type">
+                <option value="homemade">Homemade</option>
+                <option value="external">External</option>
+            </select>
+
+            <label for="form-url" id="form-url-label">URL (optional)</label>
+            <input type="text" id="form-url" placeholder="https://...">
+
+            <label for="form-ingredients">Ingredients</label>
+            <textarea id="form-ingredients" placeholder="one per line"></textarea>
+
+            <label for="form-steps">Steps</label>
+            <textarea id="form-steps" placeholder="one per line"></textarea>
+
+            <label for="form-tags">Tags</label>
+            <textarea id="form-tags" placeholder="one per line"></textarea>
+
+            <p id="admin-form-error" class="admin-error hidden"></p>
+
+            <div id="admin-form-buttons">
+                <button id="form-save-btn">Save</button>
+                <button id="form-cancel-btn">Cancel</button>
+            </div>
+            <button id="form-delete-btn" class="hidden">Delete Recipe</button>
         </section>
     </main>
 
