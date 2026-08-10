@@ -9,7 +9,37 @@ const RECIPES_URL = `${API_ROOT}/recipes`;
 const CATEGORIES_URL = `${API_ROOT}/categories`;
 const ADMIN_VALIDATE_URL = `${API_ROOT}/admin/validate`;
 
+// Static content — no reason for this to live in the backend since it
+// never changes at runtime and the admin panel has no need to edit it.
+const MOTIVATIONAL_QUOTES = [
+    "If it tastes good, nobody needs to know what happened in the kitchen.",
+    "When in doubt, add garlic. When still in doubt, add more garlic.",
+    "Tonight's special: whatever is about to expire in the fridge.",
+    "The secret ingredient is pretending you know what you're doing.",
+    "I don't need a recipe. I need confidence.",
+    "If nobody saw you burn it, did it really happen?",
+    "I don't always know what I'm doing, but I usually add salt.",
+    "Nobody said dessert had to be shared.",
+    "Nobody starts out knowing what they're doing. That's what recipes are for.",
+    "Every good cook has made something terrible. Keep cooking.",
+    "The best way to get better at cooking is to keep cooking."
+];
+
+const QUOTE_ROTATION_INTERVAL_MS = 60 * 1000; // 1 minute
+
 document.addEventListener("DOMContentLoaded", () => {
+    // ----- Motivational quote rotation -----
+    const quoteElement = document.getElementById("motivational-quote");
+    let quoteIndex = Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length);
+
+    function showNextQuote() {
+        quoteElement.textContent = MOTIVATIONAL_QUOTES[quoteIndex];
+        quoteIndex = (quoteIndex + 1) % MOTIVATIONAL_QUOTES.length;
+    }
+
+    showNextQuote(); // show one immediately, don't wait a full minute for the first one
+    setInterval(showNextQuote, QUOTE_ROTATION_INTERVAL_MS);
+
     // ----- Shared / list view elements -----
     const statusIndicator = document.getElementById("connection-status");
     const recipeContainer = document.getElementById("recipe-container");
