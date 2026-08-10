@@ -36,7 +36,7 @@ public class RecipeController {
         return providedPassword != null && adminPassword.equals(providedPassword);
     }
 
-    // ------------------- READ -------------------
+    // ------------------- READ (already working) -------------------
 
     @GetMapping
     public List<Recipe> getRecipes(
@@ -84,6 +84,7 @@ public class RecipeController {
         recipe.setCategory(categoryOpt.get());
         recipe.setSourceType(request.getSourceType());
         recipe.setUrl(request.getUrl());
+        recipe.setNotes(request.getNotes());
         recipe.setIngredients(request.getIngredients());
         recipe.setSteps(request.getSteps());
         recipe.setTags(request.getTags());
@@ -125,6 +126,7 @@ public class RecipeController {
         recipe.setCategory(categoryOpt.get());
         recipe.setSourceType(request.getSourceType());
         recipe.setUrl(request.getUrl());
+        recipe.setNotes(request.getNotes());
         recipe.setIngredients(request.getIngredients());
         recipe.setSteps(request.getSteps());
         recipe.setTags(request.getTags());

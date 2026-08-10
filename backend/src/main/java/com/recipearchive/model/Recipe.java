@@ -24,6 +24,11 @@ public class Recipe {
 
     private String url; // nullable — only used when sourceType = "external"
 
+    // Free-text notes, displayed just under the title (e.g. "double the
+    // garlic next time", "great with rice instead of noodles")
+    @Column(columnDefinition = "TEXT")
+    private String notes;
+
     // TEXT columns for free-text search (see search endpoint below)
     @Column(columnDefinition = "TEXT")
     private String ingredients;
@@ -76,6 +81,14 @@ public class Recipe {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     public String getIngredients() {
