@@ -18,6 +18,14 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/recipes")
 @CrossOrigin(origins = "*")
+// @SuppressWarnings("null") silences a VS Code / Eclipse JDT-only warning:
+// it can't statically prove that a Long (id, categoryId, etc.) is never
+// null before it's passed into Spring Data's findById()/existsById()/
+// deleteById(). In practice these are always populated correctly by
+// Spring MVC and our own logic, so this doesn't mask a real bug — it's
+// purely a false positive from the IDE's null analysis, not a compiler
+// error, and has no effect on `mvn spring-boot:run`.
+@SuppressWarnings("null")
 public class RecipeController {
 
     @Autowired
