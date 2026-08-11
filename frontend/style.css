@@ -98,14 +98,10 @@ main {
    ========================================================================== */
 #filter-section {
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 30px;
-    overflow-x: auto;
-    padding-bottom: 5px;
-}
-
-#filter-section::-webkit-scrollbar {
-    display: none;
+    justify-content: center;
 }
 
 .filter-chip {
