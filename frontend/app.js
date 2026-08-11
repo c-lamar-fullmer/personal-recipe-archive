@@ -268,16 +268,21 @@ document.addEventListener("DOMContentLoaded", () => {
         adminLogin.classList.add("hidden");
         adminPanel.classList.add("hidden");
         adminForm.classList.add("hidden");
+
+        // Hide "Edit Recipes" button while in admin mode
+        editModeBtn.classList.add("hidden");
     }
 
     function showListView() {
         hideAllViews();
         listView.classList.remove("hidden");
+        editModeBtn.classList.remove("hidden");
     }
 
     function showDetailView() {
         hideAllViews();
         recipeDetail.classList.remove("hidden");
+        editModeBtn.classList.remove("hidden");
         window.scrollTo(0, 0);
     }
 
