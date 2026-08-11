@@ -32,9 +32,9 @@
                 <button class="filter-chip active" data-category="all">all</button>
                 <button class="filter-chip" data-category="breakfast">breakfast</button>
                 <button class="filter-chip" data-category="dessert">dessert</button>
-                <button class="filter-chip" data-category="dinner">dinner</button>
-                <button class="filter-chip" data-category="main_course">main course</button>
+                <button class="filter-chip" data-category="main course">main course</button>
                 <button class="filter-chip" data-category="side">side</button>
+                <button class="filter-chip" data-category="sauce">sauce</button>
             </section>
 
             <section id="recipe-container"></section>
@@ -48,6 +48,11 @@
             </div>
 
             <div id="detail-body">
+                <div id="detail-notes-block" class="detail-block hidden">
+                    <h3>Notes</h3>
+                    <p id="detail-notes"></p>
+                </div>
+
                 <div id="detail-ingredients-block" class="detail-block">
                     <h3>Ingredients</h3>
                     <ul id="detail-ingredients"></ul>
@@ -58,14 +63,14 @@
                     <ol id="detail-steps"></ol>
                 </div>
 
-                <div id="detail-tags-block" class="detail-block">
-                    <h3>Tags</h3>
-                    <p id="detail-tags"></p>
-                </div>
-
                 <div id="detail-url-block" class="detail-block hidden">
                     <h3>Source</h3>
                     <a id="detail-url" href="#" target="_blank" rel="noopener">Open external recipe &rarr;</a>
+                </div>
+
+                <div id="detail-tags-block" class="detail-block">
+                    <h3>Tags</h3>
+                    <p id="detail-tags"></p>
                 </div>
             </div>
         </section>
@@ -100,6 +105,9 @@
 
             <label for="form-title">Title</label>
             <input type="text" id="form-title">
+
+            <label for="form-notes">Notes</label>
+            <textarea id="form-notes" placeholder="optional — e.g. substitutions, tips"></textarea>
 
             <label for="form-category">Category</label>
             <select id="form-category"></select>

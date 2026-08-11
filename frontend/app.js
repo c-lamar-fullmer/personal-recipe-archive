@@ -50,6 +50,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const recipeDetail = document.getElementById("recipe-detail");
     const backBtn = document.getElementById("back-btn");
     const detailTitle = document.getElementById("detail-title");
+    const detailNotesBlock = document.getElementById("detail-notes-block");
+    const detailNotes = document.getElementById("detail-notes");
     const detailIngredients = document.getElementById("detail-ingredients");
     const detailSteps = document.getElementById("detail-steps");
     const detailTags = document.getElementById("detail-tags");
@@ -72,6 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const adminForm = document.getElementById("admin-form");
     const adminFormHeading = document.getElementById("admin-form-heading");
     const formTitle = document.getElementById("form-title");
+    const formNotes = document.getElementById("form-notes");
     const formCategory = document.getElementById("form-category");
     const formSourceType = document.getElementById("form-source-type");
     const formUrlLabel = document.getElementById("form-url-label");
@@ -129,8 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function fetchRecipes() {
-        statusIndicator.innerText = "Loading recipes...";
-        statusIndicator.style.color = "";
+        statusIndicator.textContent = "";
 
         fetch(buildRequestUrl())
             .then((response) => {
@@ -139,14 +141,12 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .then((recipes) => {
                 renderRecipes(recipes);
-                statusIndicator.innerText = `Connected — ${recipes.length} recipe(s) found.`;
-                statusIndicator.style.color = "green";
-                statusIndicator.style.fontWeight = "bold";
+                statusIndicator.textContent = "";
             })
             .catch((error) => {
                 console.error("Failed to fetch recipes:", error);
                 recipeContainer.innerHTML = "";
-                statusIndicator.innerText = "Could not connect to the backend. Is it running on port 8080?";
+                statusIndicator.textContent = "Could not connect to the backend. Is it running on port 8080?";
                 statusIndicator.style.color = "red";
                 statusIndicator.style.fontWeight = "bold";
             });
@@ -193,7 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // =================================================================
 
     function openRecipeDetail(id) {
-        statusIndicator.innerText = "Loading recipe...";
+        statusIndicator.textContent = "";
 
         fetch(`${RECIPES_URL}/${id}`)
             .then((response) => {
@@ -203,18 +203,24 @@ document.addEventListener("DOMContentLoaded", () => {
             .then((recipe) => {
                 renderRecipeDetail(recipe);
                 showDetailView();
-                statusIndicator.innerText = "Connected.";
-                statusIndicator.style.color = "green";
             })
             .catch((error) => {
                 console.error("Failed to fetch recipe details:", error);
-                statusIndicator.innerText = "Could not load that recipe.";
+                statusIndicator.textContent = "Could not load that recipe.";
                 statusIndicator.style.color = "red";
             });
     }
 
     function renderRecipeDetail(recipe) {
         detailTitle.textContent = recipe.title || "";
+
+        if (recipe.notes && recipe.notes.trim()) {
+            detailNotes.textContent = recipe.notes;
+            detailNotesBlock.classList.remove("hidden");
+        } else {
+            detailNotesBlock.classList.add("hidden");
+        }
+
         renderListItems(detailIngredients, splitList(recipe.ingredients));
         renderListItems(detailSteps, splitList(recipe.steps));
 
@@ -412,6 +418,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // "Add new recipe" — start with a blank form
             adminFormHeading.textContent = "Add New Recipe";
             formTitle.value = "";
+            formNotes.value = "";
             formSourceType.value = "homemade";
             formUrl.value = "";
             formIngredients.value = "";
@@ -431,6 +438,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .then((recipe) => {
                 adminFormHeading.textContent = "Edit Recipe";
                 formTitle.value = recipe.title || "";
+                formNotes.value = recipe.notes || "";
                 formSourceType.value = recipe.sourceType || "homemade";
                 formUrl.value = recipe.url || "";
                 formIngredients.value = recipe.ingredients || "";
@@ -456,6 +464,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const payload = {
             title: formTitle.value.trim(),
+            notes: formNotes.value.trim(),
             sourceType: formSourceType.value,
             url: formSourceType.value === "external" ? formUrl.value.trim() : null,
             ingredients: formIngredients.value.trim(),

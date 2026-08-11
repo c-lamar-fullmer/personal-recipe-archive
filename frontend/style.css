@@ -274,6 +274,12 @@ main {
     color: var(--text-muted);
 }
 
+#detail-notes {
+    font-size: 0.95rem;
+    color: var(--text-main);
+    white-space: pre-line;
+}
+
 #detail-url {
     display: inline-block;
     color: var(--primary-color);

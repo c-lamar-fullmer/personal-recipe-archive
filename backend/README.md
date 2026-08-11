@@ -28,8 +28,9 @@ endpoints for the developer to create, edit, and delete recipes.
 
 5. On first run, Hibernate creates the `categories` and `recipes` tables automatically.
 
-6. **Seed the categories** (one-time, required before creating any recipes):
-   Run the statements in `seed_categories.sql` in pgAdmin or psql. Recipes can't be created until at least one category exists, since `category_id` is a required foreign key.
+6. **Seed categories and placeholder recipes** (one-time, required before creating any recipes):
+   Run the statements in `reset_and_seed_data.sql` in pgAdmin or psql. Recipes can't be created until at least one category exists, since `category_id` is a required foreign key. This script also loads a handful of placeholder recipes, which is useful for demoing the app (e.g. on GitHub) without it looking empty.
+   ⚠️ Run this *after* the app has started at least once, so Hibernate has already created the `categories`/`recipes` tables (and any newer columns, like `notes`) for the script to insert into.
 
 ## API reference
 
@@ -64,7 +65,7 @@ POST http://localhost:8080/api/recipes       → header X-Admin-Password: <your 
 ```
 backend/
 ├── pom.xml
-├── seed_categories.sql
+├── reset_and_seed_data.sql
 └── src/main/
     ├── java/com/recipearchive/
     │   ├── RecipeArchiveApplication.java
@@ -79,6 +80,7 @@ backend/
 ## Known limitations (Phase 1 scope)
 
 - **Search and category filter are mutually exclusive in one request** — the API doesn't yet support combining both at once. A worthwhile refinement if there's time before final submission.
+- **Categories are a fixed set** (Breakfast, Dessert, Main Course, Side, Sauce) loaded by the seed script — there's no endpoint to add a new category through the app itself. Adding one currently means an `INSERT` directly in the database.
 - **Admin auth is a single hardcoded password**, not a full authentication system. This was an intentional, documented scope decision — see the presentation's architecture slide for the reasoning.
 - **`admin.password` and your database credentials currently live in plain text** in `application.properties`. Fine for local development, but **do not commit real credentials to a public GitHub repo** — see the note below before pushing.
 

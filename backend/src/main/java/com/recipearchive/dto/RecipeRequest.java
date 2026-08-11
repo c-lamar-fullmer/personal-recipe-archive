@@ -10,6 +10,7 @@ public class RecipeRequest {
     private String title;
     private String sourceType; // "homemade" or "external"
     private String url;
+    private String notes;
     private String ingredients;
     private String steps;
     private String tags;
@@ -38,6 +39,14 @@ public class RecipeRequest {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     public String getIngredients() {
