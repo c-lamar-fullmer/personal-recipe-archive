@@ -40,11 +40,14 @@
             <section id="recipe-container"></section>
         </div>
 
-        <!-- Detail view: single recipe, read-only -->
+        <!-- Detail view: single recipe, read-only.
+             Close (X) button sits alone on its own row, top-right, above
+             the title — the header/footer are hidden while this is open
+             (see app.js) so this view can use the full screen. -->
         <section id="recipe-detail" class="hidden">
             <div id="detail-header">
-                <button id="back-btn">&larr; Back</button>
                 <h2 id="detail-title"></h2>
+                <button id="back-btn" aria-label="Close recipe">&times;</button>
             </div>
 
             <div id="detail-body">
