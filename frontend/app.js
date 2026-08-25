@@ -112,7 +112,8 @@ document.addEventListener("DOMContentLoaded", () => {
             filterChips.forEach((c) => c.classList.remove("active"));
             chip.classList.add("active");
             activeCategory = chip.dataset.category;
-            searchBar.value = "";
+            // Search is intentionally left as-is here — picking a category
+            // should narrow the current search, not erase it.
             fetchRecipes();
         });
     });
@@ -123,9 +124,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const params = new URLSearchParams();
         const searchTerm = searchBar.value.trim();
 
+        // Both apply together now — a search term AND an active category
+        // narrow the results simultaneously, rather than the search term
+        // overriding the category filter.
         if (searchTerm) {
             params.set("search", searchTerm);
-        } else if (activeCategory !== "all") {
+        }
+        if (activeCategory !== "all") {
             params.set("category", activeCategory);
         }
 
