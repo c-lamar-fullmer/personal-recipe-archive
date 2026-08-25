@@ -101,7 +101,6 @@ main {
     flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 30px;
-    justify-content: center;
 }
 
 .filter-chip {
@@ -207,10 +206,13 @@ main {
     margin-bottom: 40px;
 }
 
+/* Close (X) button sits alone on its own row, right-aligned, above the
+   title — a small circular icon button rather than a text "Back" link. */
 #detail-header {
     display: flex;
-    align-items: center;
-    gap: 16px;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
     position: sticky;
     top: 0;
     background-color: var(--card-bg);
@@ -223,13 +225,17 @@ main {
     background-color: #f1f5f9;
     color: var(--text-main);
     border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-weight: 600;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 1.4rem;
+    line-height: 1;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 #back-btn:hover {
@@ -240,6 +246,10 @@ main {
 #detail-title {
     font-size: 1.4rem;
     color: var(--primary-hover);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    flex: 1;
+    min-width: 0;
 }
 
 .detail-block {
@@ -276,11 +286,15 @@ main {
     white-space: pre-line;
 }
 
+/* Long unbroken URLs are a common horizontal-scroll culprit on mobile —
+   force them to wrap instead of pushing the layout wider than the screen. */
 #detail-url {
     display: inline-block;
     color: var(--primary-color);
     font-weight: 600;
     text-decoration: none;
+    word-break: break-all;
+    overflow-wrap: break-word;
 }
 
 #detail-url:hover {
@@ -535,4 +549,35 @@ main {
 
 #edit-mode-btn:active {
     transform: scale(0.97);
+}
+
+/* ==========================================================================
+   9. Mobile — recipe detail view uses the full screen efficiently
+   ========================================================================== */
+@media (max-width: 480px) {
+    main {
+        padding: 14px;
+    }
+
+    /* With the header/footer hidden (see app.js), the detail view can
+       drop its rounded corners and shrink its padding slightly so it
+       reads as a full, focused screen rather than a card floating in
+       whitespace. */
+    #recipe-detail {
+        padding: 16px;
+        border-radius: 0;
+        margin-bottom: 0;
+    }
+
+    /* Smaller title so long recipe names fit on one line instead of
+       wrapping awkwardly or pushing the layout wider than the screen. */
+    #detail-title {
+        font-size: 1.15rem;
+    }
+
+    #back-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 1.25rem;
+    }
 }

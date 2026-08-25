@@ -22,7 +22,7 @@ const MOTIVATIONAL_QUOTES = [
     "Nobody said dessert had to be shared.",
     "Nobody starts out knowing what they're doing. That's what recipes are for.",
     "Every good cook has made something terrible. Keep cooking.",
-    "The best way to get better at cooking is to keep cooking."
+    "The best way to get better at cooking is to keep cooking.",
 ];
 
 const QUOTE_ROTATION_INTERVAL_MS = 60 * 1000; // 1 minute
@@ -37,10 +37,12 @@ document.addEventListener("DOMContentLoaded", () => {
         quoteIndex = (quoteIndex + 1) % MOTIVATIONAL_QUOTES.length;
     }
 
-    showNextQuote(); // show one immediately, don't wait a full minute for the first one
+    showNextQuote();
     setInterval(showNextQuote, QUOTE_ROTATION_INTERVAL_MS);
 
     // ----- Shared / list view elements -----
+    const mainHeader = document.getElementById("main-header");
+    const mainFooter = document.getElementById("main-footer");
     const statusIndicator = document.getElementById("connection-status");
     const recipeContainer = document.getElementById("recipe-container");
     const searchBar = document.getElementById("search-bar");
@@ -90,12 +92,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // ----- State -----
     let activeCategory = "all";
     let searchDebounceTimer;
-    let adminPassword = null;      // set once the password is validated
-    let editingRecipeId = null;    // null = "add new", otherwise = "editing this id"
-    let categoriesCache = null;    // cached after first fetch
+    let adminPassword = null;
+    let editingRecipeId = null;
+    let categoriesCache = null;
 
     // =================================================================
-    // Public list view (unchanged behavior from before)
+    // Public list view
     // =================================================================
 
     fetchRecipes();
@@ -110,7 +112,8 @@ document.addEventListener("DOMContentLoaded", () => {
             filterChips.forEach((c) => c.classList.remove("active"));
             chip.classList.add("active");
             activeCategory = chip.dataset.category;
-            searchBar.value = "";
+            // Search is intentionally left as-is here — picking a category
+            // should narrow the current search, not erase it.
             fetchRecipes();
         });
     });
@@ -121,9 +124,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const params = new URLSearchParams();
         const searchTerm = searchBar.value.trim();
 
+        // Both apply together now — a search term AND an active category
+        // narrow the results simultaneously, rather than the search term
+        // overriding the category filter.
         if (searchTerm) {
             params.set("search", searchTerm);
-        } else if (activeCategory !== "all") {
+        }
+        if (activeCategory !== "all") {
             params.set("category", activeCategory);
         }
 
@@ -268,8 +275,9 @@ document.addEventListener("DOMContentLoaded", () => {
         adminLogin.classList.add("hidden");
         adminPanel.classList.add("hidden");
         adminForm.classList.add("hidden");
-
-        // Hide "Edit Recipes" button while in admin mode
+        // Default the footer button to hidden on every switch — only
+        // showListView/showDetailView bring it back, since those are the
+        // only views where "Edit Recipes" is a meaningful next action.
         editModeBtn.classList.add("hidden");
     }
 
@@ -277,13 +285,22 @@ document.addEventListener("DOMContentLoaded", () => {
         hideAllViews();
         listView.classList.remove("hidden");
         editModeBtn.classList.remove("hidden");
+        // Header/footer belong on the main list — always visible here.
+        mainHeader.classList.remove("hidden");
+        mainFooter.classList.remove("hidden");
     }
 
     function showDetailView() {
         hideAllViews();
         recipeDetail.classList.remove("hidden");
-        editModeBtn.classList.remove("hidden");
         window.scrollTo(0, 0);
+        // Recipe detail is a focused, full-screen view on mobile — the
+        // site header/quote and footer would just eat vertical space
+        // without adding anything useful here, so they're hidden while
+        // this view is open. The only way back in is the X button,
+        // which calls showListView() and restores both.
+        mainHeader.classList.add("hidden");
+        mainFooter.classList.add("hidden");
     }
 
     function showAdminLogin() {
@@ -317,7 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.addEventListener("click", () => {
             adminPassword = null;
             editingRecipeId = null;
-            fetchRecipes(); // refresh public list in case admin made changes
+            fetchRecipes();
             showListView();
         });
     });
@@ -420,7 +437,6 @@ document.addEventListener("DOMContentLoaded", () => {
         editingRecipeId = recipeId;
 
         if (recipeId === null) {
-            // "Add new recipe" — start with a blank form
             adminFormHeading.textContent = "Add New Recipe";
             formTitle.value = "";
             formNotes.value = "";
@@ -437,7 +453,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Editing an existing recipe — fetch its current data first
         fetch(`${RECIPES_URL}/${recipeId}`)
             .then((response) => response.json())
             .then((recipe) => {
@@ -497,7 +512,6 @@ document.addEventListener("DOMContentLoaded", () => {
         })
             .then((response) => {
                 if (response.status === 401) {
-                    // Session-equivalent expired/invalid — send them back to login
                     adminPassword = null;
                     showAdminLogin();
                     throw new Error("Unauthorized");

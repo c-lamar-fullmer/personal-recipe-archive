@@ -69,9 +69,24 @@ class RecipeControllerTest {
 
     @Test
     void getRecipes_returnsOkAndList() throws Exception {
-        when(recipeRepository.findAll()).thenReturn(List.of(sampleRecipe()));
+        // No query params means both search and category are normalized
+        // to null in the controller, so the mock stubs that exact call.
+        when(recipeRepository.searchAndFilter(null, null)).thenReturn(List.of(sampleRecipe()));
 
         mockMvc.perform(get("/api/recipes"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].title").value("Chocolate Chip Cookies"));
+    }
+
+    @Test
+    void getRecipes_withSearchAndCategory_passesBothToRepository() throws Exception {
+        // This is the actual bug fix: confirms search and category are
+        // sent to the repository TOGETHER in one call, not as two
+        // separate, mutually-exclusive lookups.
+        when(recipeRepository.searchAndFilter("garlic", "main course"))
+                .thenReturn(List.of(sampleRecipe()));
+
+        mockMvc.perform(get("/api/recipes?search=garlic&category=main course"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].title").value("Chocolate Chip Cookies"));
     }

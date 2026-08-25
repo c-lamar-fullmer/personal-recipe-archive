@@ -51,17 +51,16 @@ public class RecipeController {
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String category) {
 
-        if (search != null && !search.isBlank()) {
-            return recipeRepository
-                    .findByTitleContainingIgnoreCaseOrIngredientsContainingIgnoreCaseOrStepsContainingIgnoreCaseOrTagsContainingIgnoreCase(
-                            search, search, search, search);
-        }
+        // Normalize both to null when absent/empty/"all" — the repository
+        // query treats a null as "don't filter on this", so search and
+        // category are now applied together rather than one overriding
+        // the other.
+        String searchTerm = (search != null && !search.isBlank()) ? search : null;
+        String categoryName = (category != null && !category.isBlank() && !category.equalsIgnoreCase("all"))
+                ? category
+                : null;
 
-        if (category != null && !category.isBlank() && !category.equalsIgnoreCase("all")) {
-            return recipeRepository.findByCategory_NameIgnoreCase(category);
-        }
-
-        return recipeRepository.findAll();
+        return recipeRepository.searchAndFilter(searchTerm, categoryName);
     }
 
     @GetMapping("/{id}")
