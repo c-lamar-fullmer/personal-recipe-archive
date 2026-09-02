@@ -1,10 +1,12 @@
 package com.recipearchive.repository;
 
+// imports Recipe model and Spring Data JPA classes
 import com.recipearchive.model.Recipe;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+// imports List class for returning multiple Recipe objects
 import java.util.List;
 
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
@@ -24,6 +26,11 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     // prepared, before it knows the parameter will actually be null at
     // runtime. The cast tells Postgres up front "this is always text,"
     // regardless of whether the bound value ends up null.
+
+    // """ is a Java text block, which allows for multi-line strings without needing to escape quotes or newlines
+    // Custom search/filter query: optionally filters by category and searches
+    // title, ingredients, steps, and tags. NULL filters are ignored, and
+    // LOWER() makes matching case-insensitive.
     @Query("""
             SELECT r FROM Recipe r
             WHERE (:category IS NULL OR LOWER(r.category.name) = LOWER(CAST(:category AS string)))
@@ -33,5 +40,9 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
                  OR LOWER(r.steps) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%'))
                  OR LOWER(r.tags) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%')))
             """)
-    List<Recipe> searchAndFilter(@Param("search") String search, @Param("category") String category);
+    // Defines a method to search and filter recipes based on the provided search term and category
+    List<Recipe> searchAndFilter(
+        @Param("search") String search, 
+        @Param("category") String category
+    );
 }

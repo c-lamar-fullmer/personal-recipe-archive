@@ -1,23 +1,53 @@
 /* ==========================================================================
    1. Base Setup & Variables
    ========================================================================== */
+
+/* 
+   :root represents the highest-level element of the page.
+
+   CSS variables are defined here so the same colors can be reused
+   throughout the stylesheet. Instead of writing a color like #e67e22
+   repeatedly, we can use var(--primary-color).
+*/
 :root {
-    --primary-color: #e67e22;    /* Warm Orange */
-    --primary-hover: #d35400;    /* Darker Orange */
-    --bg-color: #f9f9f9;         /* Off-white */
-    --card-bg: #ffffff;          /* Pure White */
-    --text-main: #2c3e50;        /* Dark Slate */
-    --text-muted: #7f8c8d;       /* Cool Gray */
-    --border-color: #e2e8f0;     /* Light Border Gray */
-    --danger-color: #c0392b;     /* For delete/error states */
+    --primary-color: #e67e22;    /* Main orange used for buttons, links, etc. */
+    --primary-hover: #d35400;    /* Darker orange used when hovering */
+    --bg-color: #f9f9f9;         /* Main page background */
+    --card-bg: #ffffff;          /* White background used for cards/sections */
+    --text-main: #2c3e50;        /* Main dark text color */
+    --text-muted: #7f8c8d;       /* Lighter gray text for secondary information */
+    --border-color: #e2e8f0;     /* Light gray used for borders */
+    --danger-color: #c0392b;     /* Red used for delete/error states */
 }
 
+
+/*
+   The universal selector (*) selects EVERY HTML element.
+
+   box-sizing: border-box means an element's width/height includes
+   its padding and border. This makes sizing much easier to control.
+
+   margin and padding are reset to 0 so the browser's default spacing
+   does not interfere with our design.
+*/
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
+
+/*
+   Styles the entire page body.
+
+   display: flex + flex-direction: column creates a vertical flexbox
+   layout, allowing the header, main content, and footer to stack.
+
+   min-height: 100vh means the body is at least as tall as the
+   entire browser viewport.
+
+   This helps keep the footer at the bottom of the screen.
+*/
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--bg-color);
@@ -28,6 +58,18 @@ body {
     min-height: 100vh;
 }
 
+
+/*
+   Styles the <main> element containing the application's main content.
+
+   flex: 1 tells the main section to take up available vertical space
+   between the header and footer.
+
+   max-width prevents the content from becoming excessively wide on
+   large screens.
+
+   margin: 0 auto centers the main content horizontally.
+*/
 main {
     flex: 1;
     width: 100%;
@@ -36,13 +78,28 @@ main {
     padding: 20px;
 }
 
+
+/*
+   Any element with class="hidden" is completely removed from the
+   visible page.
+
+   !important makes this rule take priority over other display rules.
+
+   JavaScript adds/removes this class to show and hide different
+   parts of the application.
+*/
 .hidden {
     display: none !important;
 }
 
+
 /* ==========================================================================
    2. Header & Status Style
    ========================================================================== */
+
+/*
+   Styles the main header at the top of the page.
+*/
 #main-header {
     background-color: var(--card-bg);
     border-bottom: 1px solid var(--border-color);
@@ -50,6 +107,10 @@ main {
     padding: 30px 20px;
 }
 
+
+/*
+   Styles the main <h1> title inside the header.
+*/
 #main-header h1 {
     color: var(--primary-hover);
     font-size: 2.2rem;
@@ -57,6 +118,17 @@ main {
     font-weight: 700;
 }
 
+
+/*
+   Styles the motivational quote underneath the title.
+
+   font-style: italic makes the quote italic.
+
+   max-width prevents a long quote from stretching across the entire
+   screen.
+
+   margin: 0 auto centers the quote.
+*/
 #motivational-quote {
     font-style: italic;
     color: var(--text-muted);
@@ -65,19 +137,41 @@ main {
     margin: 0 auto;
 }
 
+
+/*
+   Styles the message that tells the user whether the frontend
+   is connected to the backend.
+*/
 #connection-status {
     text-align: center;
     margin: 15px 0;
     font-size: 0.9rem;
 }
 
+
 /* ==========================================================================
    3. Search Bar Style
    ========================================================================== */
+
+/*
+   Adds space underneath the search section before the category
+   filter buttons.
+*/
 #search-section {
     margin-bottom: 25px;
 }
 
+
+/*
+   Styles the search input.
+
+   width: 100% makes it fill the available width.
+
+   border-radius: 30px creates the rounded/pill-shaped appearance.
+
+   outline: none removes the browser's default focus outline.
+   We create our own focus effect below.
+*/
 #search-bar {
     width: 100%;
     padding: 14px 20px;
@@ -85,17 +179,36 @@ main {
     border: 2px solid var(--border-color);
     border-radius: 30px;
     outline: none;
+
+    /* Smoothly animates the border and shadow when the input is focused. */
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+
+/*
+   :focus applies these styles when the user clicks into or tabs
+   into the search bar.
+*/
 #search-bar:focus {
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.15);
 }
 
+
 /* ==========================================================================
    4. Category Filter Chips
    ========================================================================== */
+
+/*
+   The filter section contains all the category buttons.
+
+   display: flex places the buttons in a flexible row.
+
+   flex-wrap: wrap allows the buttons to move onto another line
+   when there isn't enough horizontal space.
+
+   gap creates consistent spacing between buttons.
+*/
 #filter-section {
     display: flex;
     flex-wrap: wrap;
@@ -103,6 +216,16 @@ main {
     margin-bottom: 30px;
 }
 
+
+/*
+   Styles each category filter button.
+
+   cursor: pointer changes the mouse cursor to indicate that
+   the button can be clicked.
+
+   white-space: nowrap prevents category names such as
+   "main course" from breaking onto multiple lines.
+*/
 .filter-chip {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
@@ -113,23 +236,51 @@ main {
     font-weight: 500;
     font-size: 0.9rem;
     white-space: nowrap;
+
+    /* Creates a smooth transition between normal and hover states. */
     transition: all 0.2s ease;
 }
 
+
+/*
+   :hover applies when the user's mouse is over a filter button.
+*/
 .filter-chip:hover {
     border-color: var(--primary-color);
     color: var(--primary-color);
 }
 
+
+/*
+   This targets a filter button that has BOTH classes:
+
+       class="filter-chip active"
+
+   JavaScript adds/removes the "active" class to indicate which
+   category is currently selected.
+*/
 .filter-chip.active {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
     color: #ffffff;
 }
 
+
 /* ==========================================================================
    5. Scrollable Recipe Card Container (CSS Grid)
    ========================================================================== */
+
+/*
+   The recipe container uses CSS Grid to arrange recipe cards.
+
+   repeat(auto-fill, minmax(260px, 1fr)) means:
+
+   - Create as many columns as will fit.
+   - Each card should be at least 260px wide.
+   - 1fr allows cards to expand to fill available space.
+
+   This makes the recipe grid responsive without needing JavaScript.
+*/
 #recipe-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -137,6 +288,18 @@ main {
     margin-bottom: 40px;
 }
 
+
+/*
+   Styles each individual recipe card.
+
+   display: flex and flex-direction: column arrange the card's
+   contents vertically.
+
+   justify-content: space-between pushes the contents apart so
+   the button can sit toward the bottom of the card.
+
+   box-shadow creates a subtle raised/card effect.
+*/
 .recipe-card {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
@@ -146,20 +309,38 @@ main {
     flex-direction: column;
     justify-content: space-between;
     box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+
+    /* Smoothly animates the hover movement and shadow. */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+
+/*
+   Moves the recipe card slightly upward when the mouse hovers over it.
+*/
 .recipe-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 16px rgba(0,0,0,0.06);
 }
 
+
+/*
+   Styles recipe titles inside cards.
+*/
 .recipe-card h3 {
     font-size: 1.2rem;
     color: var(--text-main);
     margin-bottom: 8px;
 }
 
+
+/*
+   Styles the category label displayed on recipe cards.
+
+   text-transform: uppercase changes the displayed text to uppercase.
+
+   letter-spacing adds a small amount of spacing between characters.
+*/
 .recipe-category {
     display: inline-block;
     font-size: 0.75rem;
@@ -170,6 +351,13 @@ main {
     margin-bottom: 12px;
 }
 
+
+/*
+   Styles the recipe description/preview text.
+
+   flex-grow: 1 allows this area to expand and helps keep buttons
+   aligned at the bottom of cards with different amounts of text.
+*/
 .recipe-description {
     font-size: 0.9rem;
     color: var(--text-muted);
@@ -177,6 +365,15 @@ main {
     flex-grow: 1;
 }
 
+
+/*
+   Styles the "View Recipe" button/link.
+
+   display: block allows it to occupy the available width.
+
+   text-decoration: none removes the default underline from
+   the <a> element.
+*/
 .view-recipe-btn {
     display: block;
     text-align: center;
@@ -190,14 +387,26 @@ main {
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+
+/*
+   Changes the recipe button's appearance when hovered.
+*/
 .view-recipe-btn:hover {
     background-color: var(--primary-color);
     color: #ffffff;
 }
 
+
 /* ==========================================================================
    6. Recipe Detail View
    ========================================================================== */
+
+/*
+   Styles the section that displays one recipe in detail.
+
+   This section is normally hidden and JavaScript makes it visible
+   when the user selects a recipe.
+*/
 #recipe-detail {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
@@ -206,8 +415,20 @@ main {
     margin-bottom: 40px;
 }
 
-/* Close (X) button sits alone on its own row, right-aligned, above the
-   title — a small circular icon button rather than a text "Back" link. */
+
+/*
+   The detail header contains the recipe title and close button.
+
+   display: flex places these elements next to each other.
+
+   justify-content: space-between pushes them toward opposite
+   sides of the container.
+
+   position: sticky means the header can remain visible while
+   scrolling through a long recipe.
+
+   top: 0 tells the browser where the sticky element should stop.
+*/
 #detail-header {
     display: flex;
     justify-content: space-between;
@@ -221,6 +442,13 @@ main {
     border-bottom: 1px solid var(--border-color);
 }
 
+
+/*
+   Styles the circular X/close button.
+
+   flex-shrink: 0 prevents the button from becoming smaller if
+   the recipe title is very long.
+*/
 #back-btn {
     background-color: #f1f5f9;
     color: var(--text-main);
@@ -238,11 +466,25 @@ main {
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+
+/*
+   Changes the X button when the user hovers over it.
+*/
 #back-btn:hover {
     background-color: var(--primary-color);
     color: #ffffff;
 }
 
+
+/*
+   Styles the recipe title in the detail view.
+
+   flex: 1 allows the title to use the available space next to
+   the close button.
+
+   word-wrap and overflow-wrap help prevent long recipe titles
+   from overflowing outside the screen.
+*/
 #detail-title {
     font-size: 1.4rem;
     color: var(--primary-hover);
@@ -252,10 +494,28 @@ main {
     min-width: 0;
 }
 
+
+/*
+   Each section of the recipe detail view uses this class.
+
+   Examples include:
+   - Notes
+   - Ingredients
+   - Steps
+   - Source
+   - Tags
+*/
 .detail-block {
     margin-bottom: 24px;
 }
 
+
+/*
+   Styles the headings inside each detail block.
+
+   text-transform makes headings such as "Ingredients" appear
+   as "INGREDIENTS".
+*/
 .detail-block h3 {
     font-size: 0.85rem;
     text-transform: uppercase;
@@ -264,30 +524,57 @@ main {
     margin-bottom: 10px;
 }
 
+
+/*
+   Adds left padding to the ingredient and step lists.
+
+   This creates space for the bullet points/numbers.
+*/
 #detail-ingredients,
 #detail-steps {
     padding-left: 22px;
 }
 
+
+/*
+   Styles each individual ingredient or step.
+*/
 #detail-ingredients li,
 #detail-steps li {
     margin-bottom: 6px;
     font-size: 0.95rem;
 }
 
+
+/*
+   Styles the recipe tags.
+*/
 #detail-tags {
     font-size: 0.95rem;
     color: var(--text-muted);
 }
 
+
+/*
+   Styles recipe notes.
+
+   white-space: pre-line preserves line breaks from the database
+   while still allowing normal text wrapping.
+*/
 #detail-notes {
     font-size: 0.95rem;
     color: var(--text-main);
     white-space: pre-line;
 }
 
-/* Long unbroken URLs are a common horizontal-scroll culprit on mobile —
-   force them to wrap instead of pushing the layout wider than the screen. */
+
+/*
+   Styles the external recipe URL.
+
+   word-break: break-all is particularly important on mobile:
+   long URLs can otherwise extend beyond the screen and create
+   unwanted horizontal scrolling.
+*/
 #detail-url {
     display: inline-block;
     color: var(--primary-color);
@@ -297,13 +584,26 @@ main {
     overflow-wrap: break-word;
 }
 
+
+/*
+   Adds an underline when the user hovers over the external link.
+*/
 #detail-url:hover {
     text-decoration: underline;
 }
 
+
 /* ==========================================================================
    7. Admin — shared section styling
    ========================================================================== */
+
+/*
+   Shared styling for all admin sections:
+
+   - Admin login
+   - Admin recipe list
+   - Add/edit recipe form
+*/
 .admin-section {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
@@ -312,6 +612,13 @@ main {
     margin-bottom: 40px;
 }
 
+
+/*
+   Creates the header row used inside admin sections.
+
+   justify-content: flex-end pushes the Exit Editing Mode button
+   to the right side.
+*/
 .admin-header-row {
     display: flex;
     justify-content: flex-end;
@@ -320,6 +627,10 @@ main {
     border-bottom: 1px solid var(--border-color);
 }
 
+
+/*
+   Styles the "Exit Editing Mode" button.
+*/
 .exit-edit-btn {
     background-color: #f1f5f9;
     color: var(--text-main);
@@ -332,11 +643,22 @@ main {
     transition: background-color 0.2s ease;
 }
 
+
+/*
+   Hover state for the exit button.
+*/
 .exit-edit-btn:hover {
     background-color: var(--text-main);
     color: #ffffff;
 }
 
+
+/*
+   Shared styling for admin error messages.
+
+   This class is used for things like incorrect passwords
+   and form validation errors.
+*/
 .admin-error {
     color: var(--danger-color);
     font-size: 0.85rem;
@@ -344,7 +666,12 @@ main {
     font-weight: 600;
 }
 
+
 /* ----- Admin login ----- */
+
+/*
+   Styles the password label in the admin login section.
+*/
 #admin-login label {
     display: block;
     font-size: 0.85rem;
@@ -352,6 +679,13 @@ main {
     margin-bottom: 6px;
 }
 
+
+/*
+   Styles the admin password input field.
+
+   type="password" in the HTML causes the browser to hide
+   the characters entered by the user.
+*/
 #admin-password-input {
     width: 100%;
     padding: 12px 16px;
@@ -362,10 +696,18 @@ main {
     margin-bottom: 14px;
 }
 
+
+/*
+   Changes the password input's border when it is focused.
+*/
 #admin-password-input:focus {
     border-color: var(--primary-color);
 }
 
+
+/*
+   Styles the admin login Submit button.
+*/
 #admin-submit-btn {
     background-color: var(--primary-color);
     color: #ffffff;
@@ -376,11 +718,20 @@ main {
     cursor: pointer;
 }
 
+
+/*
+   Darkens the Submit button when hovered.
+*/
 #admin-submit-btn:hover {
     background-color: var(--primary-hover);
 }
 
+
 /* ----- Admin panel (recipe management list) ----- */
+
+/*
+   Styles the button used to create a new recipe.
+*/
 #add-recipe-btn {
     background-color: var(--primary-color);
     color: #ffffff;
@@ -392,16 +743,33 @@ main {
     margin-bottom: 12px;
 }
 
+
+/*
+   Hover state for the Add New Recipe button.
+*/
 #add-recipe-btn:hover {
     background-color: var(--primary-hover);
 }
 
+
+/*
+   Styles the small instructional text underneath the Add Recipe button.
+*/
 .admin-hint {
     font-size: 0.85rem;
     color: var(--text-muted);
     margin-bottom: 16px;
 }
 
+
+/*
+   Styles each recipe row in the admin recipe management list.
+
+   display: flex allows the recipe information and edit button
+   to be positioned on the same row.
+
+   justify-content: space-between pushes them to opposite sides.
+*/
 .admin-recipe-row {
     display: flex;
     justify-content: space-between;
@@ -412,6 +780,10 @@ main {
     margin-bottom: 10px;
 }
 
+
+/*
+   Styles the Edit button/link for each admin recipe.
+*/
 .admin-edit-link {
     background: none;
     border: none;
@@ -422,17 +794,33 @@ main {
     text-decoration: underline;
 }
 
+
+/*
+   Changes the Edit button's color when hovered.
+*/
 .admin-edit-link:hover {
     color: var(--primary-hover);
 }
 
+
 /* ----- Admin add/edit form ----- */
+
+/*
+   Styles the heading at the top of the add/edit recipe form.
+*/
 #admin-form-heading {
     color: var(--primary-hover);
     font-size: 1.3rem;
     margin-bottom: 20px;
 }
 
+
+/*
+   Styles all labels inside the admin form.
+
+   text-transform: uppercase makes labels such as "Ingredients"
+   appear as "INGREDIENTS".
+*/
 #admin-form label {
     display: block;
     font-size: 0.8rem;
@@ -444,6 +832,15 @@ main {
     margin-bottom: 6px;
 }
 
+
+/*
+   Applies the same styling to:
+   - text inputs
+   - dropdown/select menus
+   - textareas
+
+   This keeps all form controls visually consistent.
+*/
 #admin-form input[type="text"],
 #admin-form select,
 #admin-form textarea {
@@ -456,23 +853,46 @@ main {
     font-family: inherit;
 }
 
+
+/*
+   Changes the border of any form control when the user is
+   currently interacting with it.
+*/
 #admin-form input[type="text"]:focus,
 #admin-form select:focus,
 #admin-form textarea:focus {
     border-color: var(--primary-color);
 }
 
+
+/*
+   Gives textareas a starting height of 90px.
+
+   resize: vertical allows the user to make the textarea taller
+   or shorter, but prevents horizontal resizing that could break
+   the page layout.
+*/
 #admin-form textarea {
     min-height: 90px;
     resize: vertical;
 }
 
+
+/*
+   Places the Save and Cancel buttons next to each other.
+
+   gap creates space between the buttons.
+*/
 #admin-form-buttons {
     display: flex;
     gap: 10px;
     margin-top: 22px;
 }
 
+
+/*
+   Styles the Save button.
+*/
 #form-save-btn {
     background-color: var(--primary-color);
     color: #ffffff;
@@ -483,10 +903,18 @@ main {
     cursor: pointer;
 }
 
+
+/*
+   Darkens the Save button when hovered.
+*/
 #form-save-btn:hover {
     background-color: var(--primary-hover);
 }
 
+
+/*
+   Styles the Cancel button.
+*/
 #form-cancel-btn {
     background-color: #f1f5f9;
     color: var(--text-main);
@@ -497,10 +925,23 @@ main {
     cursor: pointer;
 }
 
+
+/*
+   Slightly darkens the Cancel button when hovered.
+*/
 #form-cancel-btn:hover {
     background-color: #e2e8f0;
 }
 
+
+/*
+   Styles the Delete Recipe button.
+
+   Unlike the Save button, this uses the danger color because
+   deleting a recipe is a destructive action.
+
+   display: block makes it appear on its own line.
+*/
 #form-delete-btn {
     display: block;
     background-color: #ffffff;
@@ -513,14 +954,26 @@ main {
     margin-top: 16px;
 }
 
+
+/*
+   When the Delete button is hovered, its background becomes red
+   and the text becomes white.
+*/
 #form-delete-btn:hover {
     background-color: var(--danger-color);
     color: #ffffff;
 }
 
+
 /* ==========================================================================
    8. Footer & Center Admin/Edit Button
    ========================================================================== */
+
+/*
+   Styles the footer at the bottom of the page.
+
+   display: flex allows us to easily center the Edit Recipes button.
+*/
 #main-footer {
     background-color: var(--card-bg);
     border-top: 1px solid var(--border-color);
@@ -531,6 +984,13 @@ main {
     width: 100%;
 }
 
+
+/*
+   Styles the Edit Recipes button.
+
+   This is the button that takes the user from normal browsing
+   mode into the admin login/editing workflow.
+*/
 #edit-mode-btn {
     background-color: var(--text-main);
     color: #ffffff;
@@ -543,38 +1003,74 @@ main {
     transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
+
+/*
+   Changes the Edit Recipes button when hovered.
+*/
 #edit-mode-btn:hover {
     background-color: #1a252f;
 }
 
+
+/*
+   :active applies while the user is actively pressing the button.
+
+   transform: scale(0.97) makes the button briefly shrink,
+   creating a subtle "pressed" effect.
+*/
 #edit-mode-btn:active {
     transform: scale(0.97);
 }
 
+
 /* ==========================================================================
    9. Mobile — recipe detail view uses the full screen efficiently
    ========================================================================== */
+
+/*
+   @media creates a responsive CSS rule.
+
+   These styles only apply when the browser window is 480px wide
+   or smaller, which is roughly the size of a small phone.
+*/
 @media (max-width: 480px) {
+
+    /*
+       Reduces the main content's padding on small screens so there
+       is more usable space for the recipe.
+    */
     main {
         padding: 14px;
     }
 
-    /* With the header/footer hidden (see app.js), the detail view can
-       drop its rounded corners and shrink its padding slightly so it
-       reads as a full, focused screen rather than a card floating in
-       whitespace. */
+
+    /*
+       On mobile, the recipe detail view becomes more like a
+       full-screen page instead of a card.
+
+       border-radius: 0 removes the rounded corners.
+
+       margin-bottom: 0 removes the extra space underneath it.
+    */
     #recipe-detail {
         padding: 16px;
         border-radius: 0;
         margin-bottom: 0;
     }
 
-    /* Smaller title so long recipe names fit on one line instead of
-       wrapping awkwardly or pushing the layout wider than the screen. */
+
+    /*
+       Makes the recipe title slightly smaller on phones so
+       long recipe names fit better.
+    */
     #detail-title {
         font-size: 1.15rem;
     }
 
+
+    /*
+       Makes the close button slightly smaller on phones.
+    */
     #back-btn {
         width: 32px;
         height: 32px;

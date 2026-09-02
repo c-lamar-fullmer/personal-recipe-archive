@@ -1,25 +1,32 @@
+// Tells Java this class is part of the package com.recipearchive.model
 package com.recipearchive.model;
 
+// This package gives access to @Entity, @Table, @ID, @GeneratedValue, @Column, etc.
 import jakarta.persistence.*;
 
+// @Entity tells Spring "this class represents a database table."
+// By default the table name is the lowercase class name; we set it
+// explicitly to match the schema we already designed (recipes).
 @Entity
+// This tells Spring "this class represents the table named 'recipes' in the database."
 @Table(name = "recipes")
+// The blueprint for a Recipe object (represents a row in the recipes table).
 public class Recipe {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // PK
-    private Long id;
+    @Id // PK
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-incrementing ID
+    private Long id; // PK column
 
-    // FK — many recipes can point to one category.
-    // @JoinColumn is what actually creates the category_id column.
+    // FK — @ManyToOne means many recipes can point to one category.
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    // @JoinColumn is what actually creates the category_id column.
+    @JoinColumn(name = "category_id", nullable = false) // FK column, cannot be null
+    private Category category; // The category this recipe belongs to (FK column)
 
     @Column(nullable = false, unique = true) // UK — no duplicate titles
     private String title;
 
-    @Column(name = "source_type", nullable = false)
+    @Column(name = "source_type", nullable = false) // UK — "homemade" or "external"
     private String sourceType; // "homemade" or "external"
 
     private String url; // nullable — only used when sourceType = "external"
@@ -39,6 +46,8 @@ public class Recipe {
     @Column(columnDefinition = "TEXT")
     private String tags;
 
+    // --- Constructors ---
+    // Empty constructor is required by JPA (Java Persistence API) for entity classes.
     public Recipe() {
     }
 

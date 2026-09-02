@@ -1,152 +1,475 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Defines the document as HTML5. -->
+
+    <!-- Allows the page to correctly display characters such as accents and symbols. -->
     <meta charset="UTF-8">
+
+    <!-- Makes the page responsive on phones, tablets, and different screen sizes. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Text displayed in the browser tab. -->
     <title>Personal Recipe Archive</title>
+
+    <!-- Connects this HTML file to the external CSS stylesheet. -->
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
+    <!-- =========================================================
+         MAIN HEADER
+         =========================================================
+         The main title and motivational quote displayed at the
+         top of the normal recipe browsing page.
+    -->
     <header id="main-header">
+
+        <!-- Main heading displayed on the page. -->
         <h1>Personal Recipe Archive</h1>
+
+        <!-- A quote displayed underneath the main title.
+             app.js can update this element dynamically. -->
         <blockquote id="motivational-quote">
             "This is a where you will see a motivational quote." — Unknown
         </blockquote>
+
     </header>
 
+
+    <!-- =========================================================
+         MAIN CONTENT
+         =========================================================
+         Contains the main content of the application, including
+         the recipe list, recipe details, and admin sections.
+    -->
     <main>
+
+        <!-- Displays the current connection status between the
+             frontend and the backend/API. -->
         <div id="connection-status">Connecting...</div>
 
-        <!-- List view: search, filters, and the recipe grid -->
+
+        <!-- =====================================================
+             RECIPE LIST VIEW
+             =====================================================
+             This is the normal view where users search, filter,
+             and browse all available recipes.
+        -->
         <div id="list-view">
+
+            <!-- Search section containing the recipe search bar. -->
             <section id="search-section">
+
+                <!-- Text input used to search recipes.
+                     app.js reads the value entered here and sends
+                     it to the backend search endpoint. -->
                 <input 
                     type="text" 
                     id="search-bar" 
                     placeholder="search..."
                 >
+
             </section>
 
+
+            <!-- =================================================
+                 CATEGORY FILTERS
+                 =================================================
+                 These buttons allow the user to filter recipes
+                 by category.
+            -->
             <section id="filter-section">
+
+                <!--
+                    class="filter-chip" allows CSS and JavaScript
+                    to identify these buttons as category filters.
+
+                    class="active" marks "all" as the currently
+                    selected filter.
+
+                    data-category stores the category value that
+                    app.js uses when filtering recipes.
+                -->
                 <button class="filter-chip active" data-category="all">all</button>
+
                 <button class="filter-chip" data-category="breakfast">breakfast</button>
+
                 <button class="filter-chip" data-category="dessert">dessert</button>
+
                 <button class="filter-chip" data-category="main course">main course</button>
+
                 <button class="filter-chip" data-category="side">side</button>
+
                 <button class="filter-chip" data-category="sauce">sauce</button>
+
             </section>
 
+
+            <!-- Empty container where app.js dynamically creates
+                 and displays the recipe cards. -->
             <section id="recipe-container"></section>
+
         </div>
 
-        <!-- Detail view: single recipe, read-only.
-             Close (X) button sits alone on its own row, top-right, above
-             the title — the header/footer are hidden while this is open
-             (see app.js) so this view can use the full screen. -->
+
+        <!-- =====================================================
+             RECIPE DETAIL VIEW
+             =====================================================
+             Displays one recipe at a time.
+
+             "hidden" means this section is initially hidden.
+             app.js removes the hidden state when the user opens
+             a recipe.
+
+             The normal header and footer are hidden while this
+             view is open so the recipe can use the full screen.
+        -->
         <section id="recipe-detail" class="hidden">
+
+            <!-- Contains the recipe title and close/back button. -->
             <div id="detail-header">
+
+                <!-- app.js inserts the selected recipe's title here. -->
                 <h2 id="detail-title"></h2>
+
+                <!-- Button used to close the recipe detail view.
+                     &times; displays the × symbol. -->
                 <button id="back-btn" aria-label="Close recipe">&times;</button>
+
             </div>
 
+
+            <!-- Contains all of the information about the selected recipe. -->
             <div id="detail-body">
+
+
+                <!-- =================================================
+                     RECIPE NOTES
+                     =================================================
+                     Initially hidden because not every recipe has notes.
+                     app.js shows this block when notes exist.
+                -->
                 <div id="detail-notes-block" class="detail-block hidden">
+
                     <h3>Notes</h3>
+
+                    <!-- app.js inserts the recipe's notes here. -->
                     <p id="detail-notes"></p>
+
                 </div>
 
+
+                <!-- =================================================
+                     INGREDIENTS
+                     =================================================
+                -->
                 <div id="detail-ingredients-block" class="detail-block">
+
                     <h3>Ingredients</h3>
+
+                    <!-- JavaScript creates <li> elements here,
+                         one for each ingredient. -->
                     <ul id="detail-ingredients"></ul>
+
                 </div>
 
+
+                <!-- =================================================
+                     STEPS
+                     =================================================
+                -->
                 <div id="detail-steps-block" class="detail-block">
+
                     <h3>Steps</h3>
+
+                    <!-- JavaScript creates <li> elements here,
+                         one for each cooking step.
+
+                         <ol> creates an ordered/numbered list. -->
                     <ol id="detail-steps"></ol>
+
                 </div>
 
+
+                <!-- =================================================
+                     EXTERNAL RECIPE SOURCE
+                     =================================================
+                     Initially hidden because homemade recipes may
+                     not have an external URL.
+                -->
                 <div id="detail-url-block" class="detail-block hidden">
+
                     <h3>Source</h3>
+
+                    <!--
+                        href="#" is the initial placeholder URL.
+
+                        app.js replaces href with the actual recipe
+                        URL when an external recipe is displayed.
+
+                        target="_blank" opens the link in a new tab.
+
+                        rel="noopener" is a security measure used when
+                        opening a new tab with target="_blank".
+                    -->
                     <a id="detail-url" href="#" target="_blank" rel="noopener">Open external recipe &rarr;</a>
+
                 </div>
 
+
+                <!-- =================================================
+                     TAGS
+                     =================================================
+                -->
                 <div id="detail-tags-block" class="detail-block">
+
                     <h3>Tags</h3>
+
+                    <!-- app.js inserts the recipe's tags here. -->
                     <p id="detail-tags"></p>
+
                 </div>
+
             </div>
+
         </section>
 
-        <!-- Admin: password gate -->
+
+        <!-- =========================================================
+             ADMIN LOGIN
+             =========================================================
+             This section asks for the admin password before allowing
+             recipe editing.
+
+             "hidden" means it is not displayed initially.
+        -->
         <section id="admin-login" class="hidden admin-section">
+
+            <!-- Row containing the button for leaving admin mode. -->
             <div class="admin-header-row">
+
                 <button class="exit-edit-btn">Exit Editing Mode</button>
+
             </div>
+
+            <!-- Label connected to the password input using "for". -->
             <label for="admin-password-input">Password</label>
+
+            <!-- Password input hides the characters as they are typed. -->
             <input type="password" id="admin-password-input">
+
+            <!-- Submits the entered admin password. -->
             <button id="admin-submit-btn">Submit</button>
-            <p id="admin-login-error" class="admin-error hidden">Incorrect password. Try again.</p>
+
+            <!-- Error message shown when the password is incorrect.
+                 "hidden" means it is hidden until app.js displays it. -->
+            <p id="admin-login-error" class="admin-error hidden">
+                Incorrect password. Try again.
+            </p>
+
         </section>
 
-        <!-- Admin: recipe management list -->
+
+        <!-- =========================================================
+             ADMIN RECIPE MANAGEMENT LIST
+             =========================================================
+             Displays the list of recipes when the user is in
+             authenticated admin/editing mode.
+        -->
         <section id="admin-panel" class="hidden admin-section">
+
+            <!-- Admin navigation/header row. -->
             <div class="admin-header-row">
+
                 <button class="exit-edit-btn">Exit Editing Mode</button>
+
             </div>
+
+            <!-- Opens the form for creating a new recipe. -->
             <button id="add-recipe-btn">+ Add new recipe</button>
+
+            <!-- Instruction for the admin. -->
             <p class="admin-hint">Click on a recipe to edit/delete</p>
+
+            <!-- Empty container where app.js dynamically creates
+                 the admin recipe list. -->
             <div id="admin-recipe-list"></div>
+
         </section>
 
-        <!-- Admin: add / edit recipe form -->
+
+        <!-- =========================================================
+             ADMIN ADD / EDIT RECIPE FORM
+             =========================================================
+             This form is used for both creating new recipes and
+             editing existing recipes.
+        -->
         <section id="admin-form" class="hidden admin-section">
+
+            <!-- Admin navigation/header row. -->
             <div class="admin-header-row">
+
                 <button class="exit-edit-btn">Exit Editing Mode</button>
+
             </div>
+
+            <!-- app.js changes this heading depending on whether
+                 the user is adding or editing a recipe. -->
             <h2 id="admin-form-heading">Add New Recipe</h2>
 
+
+            <!-- =====================================================
+                 TITLE
+                 =====================================================
+            -->
             <label for="form-title">Title</label>
+
+            <!-- Recipe title input. -->
             <input type="text" id="form-title">
 
+
+            <!-- =====================================================
+                 NOTES
+                 =====================================================
+            -->
             <label for="form-notes">Notes</label>
+
+            <!-- Larger text field for optional recipe notes. -->
             <textarea id="form-notes" placeholder="optional — e.g. substitutions, tips"></textarea>
 
+
+            <!-- =====================================================
+                 CATEGORY
+                 =====================================================
+            -->
             <label for="form-category">Category</label>
+
+            <!-- Dropdown menu for selecting a recipe category.
+                 app.js populates the available options. -->
             <select id="form-category"></select>
 
+
+            <!-- =====================================================
+                 SOURCE TYPE
+                 =====================================================
+            -->
             <label for="form-source-type">Source</label>
+
+            <!-- Dropdown allowing the admin to choose whether
+                 the recipe is homemade or from an external source. -->
             <select id="form-source-type">
+
+                <!-- Value sent to JavaScript/backend when selected. -->
                 <option value="homemade">Homemade</option>
+
                 <option value="external">External</option>
+
             </select>
 
+
+            <!-- =====================================================
+                 EXTERNAL URL
+                 =====================================================
+            -->
             <label for="form-url" id="form-url-label">URL (optional)</label>
+
+            <!-- URL for an external recipe.
+                 Only relevant when source type is external. -->
             <input type="text" id="form-url" placeholder="https://...">
 
+
+            <!-- =====================================================
+                 INGREDIENTS
+                 =====================================================
+            -->
             <label for="form-ingredients">Ingredients</label>
+
+            <!-- Text area where ingredients are entered.
+                 The placeholder tells the admin to enter one
+                 ingredient per line. -->
             <textarea id="form-ingredients" placeholder="one per line"></textarea>
 
+
+            <!-- =====================================================
+                 STEPS
+                 =====================================================
+            -->
             <label for="form-steps">Steps</label>
+
+            <!-- Text area where cooking steps are entered,
+                 with one step per line. -->
             <textarea id="form-steps" placeholder="one per line"></textarea>
 
+
+            <!-- =====================================================
+                 TAGS
+                 =====================================================
+            -->
             <label for="form-tags">Tags</label>
+
+            <!-- Text area for entering recipe tags,
+                 with one tag per line. -->
             <textarea id="form-tags" placeholder="one per line"></textarea>
 
+
+            <!-- Error message for problems with the recipe form.
+                 Initially hidden and displayed by app.js when needed. -->
             <p id="admin-form-error" class="admin-error hidden"></p>
 
+
+            <!-- Contains the Save and Cancel buttons. -->
             <div id="admin-form-buttons">
+
+                <!-- Saves the new recipe or changes to an existing recipe. -->
                 <button id="form-save-btn">Save</button>
+
+                <!-- Cancels the current add/edit operation. -->
                 <button id="form-cancel-btn">Cancel</button>
+
             </div>
+
+
+            <!-- Delete button for an existing recipe.
+                 Initially hidden because you cannot delete a recipe
+                 while creating a brand-new one. -->
             <button id="form-delete-btn" class="hidden">Delete Recipe</button>
+
         </section>
+
     </main>
 
+
+    <!-- =========================================================
+         FOOTER
+         =========================================================
+         Contains the button used to enter admin/editing mode.
+    -->
     <footer id="main-footer">
+
+        <!-- Clicking this button starts the admin login process. -->
         <button id="edit-mode-btn">Edit Recipes</button>
+
     </footer>
 
+
+    <!-- =========================================================
+         JAVASCRIPT
+         =========================================================
+         Loads app.js after the HTML has been created.
+
+         app.js handles:
+         - Fetching recipes from the backend
+         - Searching and filtering
+         - Displaying recipe details
+         - Admin login
+         - Adding recipes
+         - Editing recipes
+         - Deleting recipes
+         - Showing/hiding different sections
+    -->
     <script src="app.js"></script>
+
 </body>
 </html>
