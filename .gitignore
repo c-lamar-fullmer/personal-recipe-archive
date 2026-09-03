@@ -13,3 +13,8 @@ build/
 # Ignore operating system files
 .DS_Store
 Thumbs.db
+
+# Contains real DB credentials and the admin password — never commit this.
+# See backend/src/main/resources/application.properties.example for the
+# template version instead.
+backend/src/main/resources/application.properties
