@@ -1,11 +1,16 @@
 // ---------------------------------------------------------------
-// Personal Recipe Archive — frontend logic
+// Lamar's Digital Cookbook — frontend logic
 // Handles search/filter, the read-only detail view, and the
 // password-gated admin editing UI (add / edit / delete recipes).
 // ---------------------------------------------------------------
 
-// Base URL for all requests to the Spring Boot backend.
-const API_ROOT = "http://localhost:8080/api";
+// Use the local backend while developing on localhost; otherwise use Render.
+const isLocalDevelopment = ["localhost", "127.0.0.1", "::1", "[::1]"].includes(
+    window.location.hostname
+);
+const API_ROOT = isLocalDevelopment
+    ? "http://localhost:8080/api"
+    : "https://lamars-digital-cookbook.onrender.com/api";
 
 // Build specific API URLs from the base URL.
 // Using constants prevents us from having to repeatedly type the full URL.
@@ -87,6 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const statusIndicator = document.getElementById("connection-status");
     const recipeContainer = document.getElementById("recipe-container");
     const searchBar = document.getElementById("search-bar");
+    const clearSearchBtn = document.getElementById("clear-search-btn");
 
     // querySelectorAll() returns every element matching the CSS selector.
     // Here, it finds all buttons with class="filter-chip".
@@ -98,6 +104,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const recipeDetail = document.getElementById("recipe-detail");
     const backBtn = document.getElementById("back-btn");
     const detailTitle = document.getElementById("detail-title");
+    const detailFooterActions = document.getElementById("detail-footer-actions");
+    const detailEditBtn = document.getElementById("detail-edit-btn");
+    const conversionOpenBtn = document.getElementById("conversion-open-btn");
+    const conversionModal = document.getElementById("conversion-modal");
+    const conversionCloseBtn = document.getElementById("conversion-close-btn");
+    const previewBackBtn = document.getElementById("preview-back-btn");
+    const previewSaveBtn = document.getElementById("preview-save-btn");
+    const previewNotice = document.getElementById("preview-notice");
     const detailNotesBlock = document.getElementById("detail-notes-block");
     const detailNotes = document.getElementById("detail-notes");
     const detailIngredients = document.getElementById("detail-ingredients");
@@ -140,6 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const formTags = document.getElementById("form-tags");
     const adminFormError = document.getElementById("admin-form-error");
     const formSaveBtn = document.getElementById("form-save-btn");
+    const formPreviewBtn = document.getElementById("form-preview-btn");
     const formCancelBtn = document.getElementById("form-cancel-btn");
     const formDeleteBtn = document.getElementById("form-delete-btn");
 
@@ -167,6 +182,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // null means we are creating a new recipe instead.
     let editingRecipeId = null;
 
+    // The recipe currently displayed, or the recipe to open after login.
+    let activeRecipeId = null;
+    let requestedEditRecipeId = null;
+    let isPreviewingRecipe = false;
+
     // Stores categories after they have been loaded once.
     // This prevents repeatedly requesting the same categories.
     let categoriesCache = null;
@@ -179,8 +199,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // Load recipes as soon as the page is ready.
     fetchRecipes();
 
+    function updateClearSearchButton() {
+        clearSearchBtn.classList.toggle("hidden", !searchBar.value);
+    }
+
     // Listen for changes to the search box.
     searchBar.addEventListener("input", () => {
+        updateClearSearchButton();
 
         // Cancel the previous timer if the user is still typing.
         clearTimeout(searchDebounceTimer);
@@ -188,6 +213,14 @@ document.addEventListener("DOMContentLoaded", () => {
         // Wait 300 milliseconds before searching.
         // This is called "debouncing" and prevents excessive API requests.
         searchDebounceTimer = setTimeout(fetchRecipes, 300);
+    });
+
+    clearSearchBtn.addEventListener("click", () => {
+        searchBar.value = "";
+        updateClearSearchButton();
+        searchBar.focus();
+        clearTimeout(searchDebounceTimer);
+        fetchRecipes();
     });
 
 
@@ -217,7 +250,84 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // When the X button is clicked, return to the recipe list.
-    backBtn.addEventListener("click", showListView);
+    backBtn.addEventListener("click", () => {
+        if (isPreviewingRecipe) {
+            showAdminForm();
+            return;
+        }
+
+        showListView();
+    });
+
+    detailEditBtn.addEventListener("click", () => {
+        if (activeRecipeId === null) return;
+
+        requestedEditRecipeId = activeRecipeId;
+        if (adminPassword) {
+            openAdminForm(requestedEditRecipeId);
+            requestedEditRecipeId = null;
+        } else {
+            showAdminLogin();
+        }
+    });
+
+    conversionOpenBtn.addEventListener("click", openConversionCalculator);
+    conversionCloseBtn.addEventListener("click", closeConversionCalculator);
+    conversionModal.addEventListener("click", (event) => {
+        if (event.target === conversionModal) {
+            closeConversionCalculator();
+        }
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !conversionModal.classList.contains("hidden")) {
+            closeConversionCalculator();
+        }
+    });
+
+    document.getElementById("temperature-f").addEventListener("input", (event) => {
+        const fahrenheit = event.target.valueAsNumber;
+        document.getElementById("temperature-c").value = Number.isFinite(fahrenheit)
+            ? formatConversionValue((fahrenheit - 32) * 5 / 9)
+            : "";
+    });
+
+    document.getElementById("temperature-c").addEventListener("input", (event) => {
+        const celsius = event.target.valueAsNumber;
+        document.getElementById("temperature-f").value = Number.isFinite(celsius)
+            ? formatConversionValue(celsius * 9 / 5 + 32)
+            : "";
+    });
+
+    document.querySelectorAll(".conversion-input[data-conversion-peer]").forEach((input) => {
+        input.addEventListener("input", () => {
+            const value = input.valueAsNumber;
+            const factor = Number(input.dataset.conversionFactor);
+            const converted = input.dataset.conversionDirection === "reverse"
+                ? value / factor
+                : value * factor;
+
+            document.getElementById(input.dataset.conversionPeer).value =
+                Number.isFinite(value) ? formatConversionValue(converted) : "";
+        });
+    });
+
+    previewBackBtn.addEventListener("click", showAdminForm);
+    previewSaveBtn.addEventListener("click", saveRecipe);
+
+    function formatConversionValue(value) {
+        return String(Number(value.toFixed(4)));
+    }
+
+    function openConversionCalculator() {
+        conversionModal.classList.remove("hidden");
+        document.getElementById("temperature-f").focus();
+    }
+
+    function closeConversionCalculator() {
+        conversionModal.classList.add("hidden");
+        conversionOpenBtn.focus();
+    }
 
 
     // =============================================================
@@ -283,8 +393,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // The second .then() receives the parsed recipe data.
             .then((recipes) => {
 
-                // Display the recipes on the page.
-                renderRecipes(recipes);
+                renderRecipes(sortRecipesByTitle(recipes));
 
                 // Clear the connection status.
                 statusIndicator.textContent = "";
@@ -300,12 +409,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 recipeContainer.innerHTML = "";
 
                 // Show a user-friendly error message.
-                statusIndicator.textContent =
-                    "Could not connect to the backend. Is it running on port 8080?";
+                statusIndicator.textContent = isLocalDevelopment
+                    ? "Could not connect to the local API. Check that PostgreSQL and the backend are running, then refresh. See README.md for setup steps."
+                    : "Could not connect to the hosted API. It may be starting; try refreshing in a moment.";
 
                 statusIndicator.style.color = "red";
                 statusIndicator.style.fontWeight = "bold";
             });
+    }
+
+    function sortRecipesByTitle(recipes) {
+        return [...recipes].sort((a, b) =>
+            String(a.title || "").localeCompare(
+                String(b.title || ""),
+                undefined,
+                { sensitivity: "base", numeric: true }
+            )
+        );
     }
 
 
@@ -434,6 +554,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // =============================================================
 
     function renderRecipeDetail(recipe) {
+
+        activeRecipeId = recipe.id ?? null;
+        isPreviewingRecipe = false;
+        detailEditBtn.classList.toggle("hidden", activeRecipeId === null);
+        detailFooterActions.classList.toggle("hidden", activeRecipeId === null);
+        previewBackBtn.classList.add("hidden");
+        previewSaveBtn.classList.add("hidden");
+        previewNotice.classList.add("hidden");
 
         // Display the recipe title.
         detailTitle.textContent = recipe.title || "";
@@ -569,6 +697,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function showListView() {
 
         hideAllViews();
+        isPreviewingRecipe = false;
 
         listView.classList.remove("hidden");
         editModeBtn.classList.remove("hidden");
@@ -599,6 +728,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function showAdminLogin() {
 
         hideAllViews();
+        mainHeader.classList.remove("hidden");
+        mainFooter.classList.remove("hidden");
 
         // Hide any previous password error.
         adminLoginError.classList.add("hidden");
@@ -616,6 +747,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function showAdminPanel() {
 
         hideAllViews();
+        isPreviewingRecipe = false;
 
         adminPanel.classList.remove("hidden");
 
@@ -630,6 +762,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function showAdminForm() {
 
         hideAllViews();
+        isPreviewingRecipe = false;
 
         adminForm.classList.remove("hidden");
 
@@ -642,7 +775,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // =============================================================
 
     // Clicking "Edit Recipes" opens the admin login screen.
-    editModeBtn.addEventListener("click", showAdminLogin);
+    editModeBtn.addEventListener("click", () => {
+        requestedEditRecipeId = null;
+        showAdminLogin();
+    });
 
 
     // Add an exit handler to every "Exit Editing Mode" button.
@@ -656,6 +792,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Clear the recipe being edited.
             editingRecipeId = null;
+            requestedEditRecipeId = null;
 
             // Refresh the public recipe list.
             fetchRecipes();
@@ -696,8 +833,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 // add/edit/delete requests.
                 adminPassword = attemptedPassword;
 
-                // Authentication succeeded — show the admin panel.
-                showAdminPanel();
+                // Open the requested recipe directly after page-level editing login.
+                if (requestedEditRecipeId !== null) {
+                    const recipeId = requestedEditRecipeId;
+                    requestedEditRecipeId = null;
+                    openAdminForm(recipeId);
+                } else {
+                    showAdminPanel();
+                }
             })
 
             .catch(() => {
@@ -733,15 +876,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
-                // Create one admin row for every recipe.
-                recipes.forEach((recipe) => {
+                // Show recipes in title order to make the admin list easier to scan.
+                sortRecipesByTitle(recipes).forEach((recipe) => {
 
                     const row = document.createElement("div");
                     row.className = "admin-recipe-row";
 
                     row.innerHTML = `
                         <span>${escapeHtml(recipe.title)}</span>
-                        <button class="admin-edit-link" data-id="${recipe.id}">edit/delete</button>
+                        <button class="admin-edit-link" data-id="${recipe.id}">Edit / Delete</button>
                     `;
 
                     adminRecipeList.appendChild(row);
@@ -949,31 +1092,58 @@ document.addEventListener("DOMContentLoaded", () => {
     // Admin: save recipe
     // =============================================================
 
-    formSaveBtn.addEventListener("click", () => {
+    function buildFormPayload() {
+        return {
+            title: formTitle.value.trim(),
+            notes: formNotes.value.trim(),
+            sourceType: formSourceType.value,
+            url: formSourceType.value === "external"
+                ? formUrl.value.trim()
+                : null,
+            ingredients: formIngredients.value.trim(),
+            steps: formSteps.value.trim(),
+            tags: formTags.value.trim(),
+            categoryId: Number(formCategory.value),
+        };
+    }
+
+    function previewRecipe() {
+        const payload = buildFormPayload();
+
+        if (!payload.title) {
+            showFormError("Title is required.");
+            return;
+        }
+
+        const selectedCategory = formCategory.selectedOptions[0];
+        const preview = {
+            ...payload,
+            id: editingRecipeId,
+            category: selectedCategory
+                ? { id: payload.categoryId, name: selectedCategory.textContent }
+                : null,
+        };
+
+        adminFormError.classList.add("hidden");
+        renderRecipeDetail(preview);
+        activeRecipeId = editingRecipeId;
+        isPreviewingRecipe = true;
+        detailEditBtn.classList.add("hidden");
+        detailFooterActions.classList.add("hidden");
+        previewBackBtn.classList.remove("hidden");
+        previewSaveBtn.classList.remove("hidden");
+        previewNotice.classList.remove("hidden");
+        showDetailView();
+    }
+
+    formPreviewBtn.addEventListener("click", previewRecipe);
+
+    function saveRecipe() {
 
         // Hide any previous error.
         adminFormError.classList.add("hidden");
 
-
-        // Build an object containing the form data.
-        // This object will eventually be converted into JSON.
-        const payload = {
-            title: formTitle.value.trim(),
-            notes: formNotes.value.trim(),
-            sourceType: formSourceType.value,
-
-            // Only send a URL for external recipes.
-            url: formSourceType.value === "external"
-                ? formUrl.value.trim()
-                : null,
-
-            ingredients: formIngredients.value.trim(),
-            steps: formSteps.value.trim(),
-            tags: formTags.value.trim(),
-
-            // Convert the selected category ID from a string to a number.
-            categoryId: Number(formCategory.value),
-        };
+        const payload = buildFormPayload();
 
 
         // Basic client-side validation.
@@ -1052,10 +1222,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Don't display "Unauthorized" as a normal form error
                 // because the user has already been sent to login.
                 if (error.message !== "Unauthorized") {
+                    if (isPreviewingRecipe) {
+                        showAdminForm();
+                    }
                     showFormError(error.message);
                 }
             });
-    });
+    }
+
+    formSaveBtn.addEventListener("click", saveRecipe);
 
 
     // =============================================================

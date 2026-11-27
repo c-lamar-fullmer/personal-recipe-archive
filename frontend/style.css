@@ -141,11 +141,51 @@ main {
 /*
    Styles the message that tells the user whether the frontend
    is connected to the backend.
+
+   This element sits directly on the page's background (it's
+   inside <main>, which has no background of its own), so its
+   default state stays plain and unstyled — no box, no color.
 */
 #connection-status {
     text-align: center;
     margin: 15px 0;
     font-size: 0.9rem;
+}
+
+
+/*
+   app.js sets color:red and font-weight:bold directly on this
+   element (via JavaScript, not a CSS class) whenever the backend
+   can't be reached. Plain red text sitting straight on the page
+   background is genuinely hard to read — not just a style
+   preference, the two colors don't give enough contrast against
+   each other.
+
+   Instead of just picking a different red, this turns the message
+   into a solid, high-contrast badge: white text on a solid red
+   pill. That reads clearly no matter what's behind it.
+
+   :not(:empty) means this styling only applies when there's
+   actual text inside the element. When app.js clears the message
+   back to an empty string, the element goes back to being fully
+   invisible with no leftover box.
+
+   !important is required here specifically because it's fighting
+   an INLINE style set by JavaScript (element.style.color = "red").
+   Inline styles normally beat regular CSS rules, so !important is
+   one of the few genuinely correct times to use it: overriding
+   an inline style without having to rewrite the JavaScript.
+*/
+#connection-status:not(:empty) {
+    display: block;
+    width: fit-content;
+    margin: 15px auto;
+    text-align: center;
+    color: #ffffff !important;
+    background-color: var(--danger-color);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
 }
 
 
@@ -161,6 +201,10 @@ main {
     margin-bottom: 25px;
 }
 
+#search-input-wrapper {
+    position: relative;
+}
+
 
 /*
    Styles the search input.
@@ -174,7 +218,7 @@ main {
 */
 #search-bar {
     width: 100%;
-    padding: 14px 20px;
+    padding: 14px 48px 14px 20px;
     font-size: 1rem;
     border: 2px solid var(--border-color);
     border-radius: 30px;
@@ -182,6 +226,27 @@ main {
 
     /* Smoothly animates the border and shadow when the input is focused. */
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#clear-search-btn {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+#clear-search-btn:hover {
+    background-color: #f1f5f9;
+    color: var(--text-main);
 }
 
 
@@ -212,6 +277,7 @@ main {
 #filter-section {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 10px;
     margin-bottom: 30px;
 }
@@ -494,6 +560,157 @@ main {
     min-width: 0;
 }
 
+#detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+#preview-notice {
+    margin-bottom: 16px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.detail-action-btn {
+    background-color: #f1f5f9;
+    color: var(--text-main);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.detail-action-btn:hover {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+#detail-footer-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+#conversion-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.55);
+}
+
+#conversion-dialog {
+    width: min(100%, 680px);
+    max-height: 90vh;
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+}
+
+#conversion-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+#conversion-modal-title {
+    color: var(--primary-hover);
+    font-size: 1.2rem;
+}
+
+#conversion-close-btn {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background-color: #f1f5f9;
+    color: var(--text-main);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+#conversion-close-btn:hover {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+#conversion-modal-content {
+    max-height: calc(90vh - 70px);
+    overflow-y: auto;
+    padding: 16px 20px 20px;
+}
+
+.conversion-group + .conversion-group {
+    margin-top: 20px;
+}
+
+.conversion-group h3 {
+    margin-bottom: 10px;
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.conversion-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.conversion-row + .conversion-row {
+    margin-top: 8px;
+}
+
+.conversion-value label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.conversion-value input {
+    width: 100%;
+    min-width: 0;
+    padding: 9px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-main);
+    font: inherit;
+}
+
+.conversion-value input:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 1px;
+}
+
+.conversion-equals {
+    padding-top: 18px;
+    color: var(--text-muted);
+    font-weight: 700;
+}
 
 /*
    Each section of the recipe detail view uses this class.
@@ -657,7 +874,10 @@ main {
    Shared styling for admin error messages.
 
    This class is used for things like incorrect passwords
-   and form validation errors.
+   and form validation errors. These sit inside .admin-section,
+   which has a white card background, so red text here already
+   has good contrast without needing the badge treatment used
+   for #connection-status above.
 */
 .admin-error {
     color: var(--danger-color);
@@ -903,6 +1123,20 @@ main {
     cursor: pointer;
 }
 
+#form-preview-btn {
+    background-color: #f1f5f9;
+    color: var(--text-main);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#form-preview-btn:hover {
+    background-color: #e2e8f0;
+}
+
 
 /*
    Darkens the Save button when hovered.
@@ -1035,12 +1269,92 @@ main {
 */
 @media (max-width: 480px) {
 
+    #main-header {
+        padding: 22px 12px;
+    }
+
+    #main-header h1 {
+        font-size: clamp(1.1rem, 5vw, 1.5rem);
+        white-space: nowrap;
+    }
+
+    #motivational-quote {
+        font-size: 0.85rem;
+        line-height: 1.35;
+    }
+
     /*
        Reduces the main content's padding on small screens so there
        is more usable space for the recipe.
     */
     main {
         padding: 14px;
+        padding-bottom: 110px;
+    }
+
+    #filter-section {
+        gap: 8px;
+    }
+
+    .filter-chip {
+        padding: 7px 14px;
+        font-size: 0.82rem;
+    }
+
+    #detail-footer-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #detail-footer-actions .detail-action-btn {
+        white-space: normal;
+    }
+
+    #conversion-modal {
+        inset: 0 0 88px;
+        padding: 8px;
+    }
+
+    #conversion-dialog {
+        max-height: calc(100vh - 104px);
+        max-height: calc(100dvh - 104px);
+        border-radius: 10px;
+    }
+
+    #conversion-modal-content {
+        max-height: calc(100vh - 170px);
+        max-height: calc(100dvh - 170px);
+        padding: 12px;
+    }
+
+    .conversion-row {
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        gap: 8px;
+        padding: 9px;
+    }
+
+    .conversion-value {
+        min-width: 0;
+    }
+
+    .conversion-value label {
+        font-size: 0.72rem;
+        line-height: 1.2;
+        overflow-wrap: anywhere;
+    }
+
+    .conversion-value input {
+        padding: 8px 6px;
+        font-size: 0.9rem;
+    }
+
+    #detail-title,
+    #detail-notes,
+    #detail-ingredients li,
+    #detail-steps li,
+    #detail-tags,
+    #detail-url {
+        overflow-wrap: anywhere;
     }
 
 

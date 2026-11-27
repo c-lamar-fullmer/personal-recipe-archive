@@ -1,118 +1,156 @@
 # Personal Recipe Archive
 
-A full-stack recipe archive with a Java Spring Boot REST API, PostgreSQL database, and a dependency-free HTML/CSS/JavaScript frontend.
+A small full-stack recipe archive: a plain HTML/CSS/JavaScript frontend, a
+Spring Boot REST API, and PostgreSQL. The frontend needs no Node.js or npm.
 
-## Prerequisites
+The project can run locally against a teacher's own PostgreSQL database or be
+shown online with the Render deployment. The local and deployed databases are
+separate.
 
-Install the following before running the application. The links below point to the official download or installation pages:
+## Run locally
 
-- [Java Development Kit (JDK) 17 or later](https://adoptium.net/temurin/releases/)
-- [Apache Maven 3.9 or later](https://maven.apache.org/install.html)
-- [PostgreSQL 14 or later](https://www.postgresql.org/download/), running locally
-- A modern web browser
+### Prerequisites
 
-The frontend does not require Node.js or npm. To use the command-line frontend server described below, install [Python 3](https://www.python.org/downloads/). A VS Code Live Server extension can be used instead. Maven downloads the Java libraries listed in `backend/pom.xml` during the first build.
+- Java 17 or later
+- Maven 3.9 or later (`mvnw` is not included)
+- PostgreSQL 14 or later, running locally
+- A browser and either Python 3 or the VS Code Live Server extension
 
-You can verify the command-line prerequisites with:
+Check Java and Maven from a terminal:
 
 ```bash
 java -version
 mvn -version
-python3 --version
 ```
 
-## Installation
+### 1. Clone the repository and create a database
 
-1. Clone or extract this repository and open a terminal in the project root.
+Clone the repository and open its root directory:
 
-2. Create the PostgreSQL database:
+```bash
+git clone https://github.com/c-lamar-fullmer/personal-recipe-archive.git
+cd personal-recipe-archive
+```
 
-   ```sql
-   CREATE DATABASE recipe_archive;
-   ```
+Create an empty PostgreSQL database named `recipe_archive` using pgAdmin or
+`psql`:
 
-   This can be run in `psql` or pgAdmin.
+```sql
+CREATE DATABASE recipe_archive;
+```
 
-3. Create the backend configuration file:
+### 2. Add local settings
 
-   ```bash
-   cp backend/src/main/resources/application.properties.example \
-      backend/src/main/resources/application.properties
-   ```
+From the repository root, copy the example settings file:
 
-4. Open `backend/src/main/resources/application.properties` and replace:
+```bash
+cp backend/src/main/resources/application.properties.example \
+   backend/src/main/resources/application.properties
+```
 
-   - `YOUR_DB_USERNAME` with your PostgreSQL username
-   - `YOUR_DB_PASSWORD` with your PostgreSQL password
-   - `YOUR_ADMIN_PASSWORD` with the password used by the recipe editing screen
+Edit `backend/src/main/resources/application.properties` and replace
+`YOUR_DB_USERNAME`, `YOUR_DB_PASSWORD`, and `YOUR_ADMIN_PASSWORD` with values
+for this computer. The database username and password are PostgreSQL
+credentials; the admin password is the one used by the recipe editor.
 
-   Do not commit this file. It contains local credentials and is ignored by Git.
+This local settings file is ignored by Git and must not be committed. Each
+person cloning the project creates their own copy. The example file contains
+placeholders, not working credentials.
 
-## Run the application
+### 3. Start the backend
 
-The backend and frontend run as separate processes.
-
-### 1. Start the backend
-
-From the project root:
+In a terminal from the repository root:
 
 ```bash
 cd backend
 mvn spring-boot:run
 ```
 
-The REST API starts at `http://localhost:8080/api`. On the first start, Hibernate creates the database tables automatically.
+Keep this terminal running. On its first successful start, Hibernate creates
+the application tables in the local `recipe_archive` database.
 
-### 2. Seed the database
+### 4. Load the demo recipes
 
-After the backend has started successfully at least once, run `backend/reset_and_seed_data.sql` in pgAdmin or `psql` while connected to the `recipe_archive` database. This inserts the application categories and demonstration recipes.
+The demo data is in [`backend/seed_demo_data.sql`](backend/seed_demo_data.sql).
+Run it once against the `recipe_archive` database, after the backend has
+started and created its tables. For example, from the repository root:
 
-The seed script is intended to be run after Hibernate creates the tables. It can be run again to reset and reload the sample data according to the statements in the script.
+```bash
+psql -U your_postgres_user -d recipe_archive -f backend/seed_demo_data.sql
+```
 
-### 3. Start the frontend
+Replace `your_postgres_user` with the PostgreSQL username from your local
+settings. Alternatively, open the SQL file in pgAdmin's Query Tool connected
+to `recipe_archive` and execute it.
 
-Leave the backend running, open a second terminal from the project root, and serve the frontend files:
+The seed script refuses to run if recipes or categories already exist; it
+does not delete existing data. If you intentionally want to erase the local
+recipes and categories, run [`backend/reset_data.sql`](backend/reset_data.sql)
+first, then run the seed script again. **Resetting deletes all recipe and
+category data in the selected database.**
+
+### 5. Start the frontend
+
+Open a second terminal at the repository root and serve the frontend:
 
 ```bash
 python3 -m http.server 5500 --directory frontend
 ```
 
-Open `http://localhost:5500` in a browser. The frontend calls the backend at `http://localhost:8080/api`.
+Visit <http://localhost:5500>. Alternatively, open `frontend/index.html` with
+VS Code Live Server. Do not open the HTML file directly from the filesystem.
 
-Alternatively, open `frontend/index.html` with a VS Code Live Server extension.
+When served on `localhost` or `127.0.0.1`, the frontend automatically calls
+the local API at `http://localhost:8080/api`. On a non-localhost site, it uses
+the Render API. This lets local work use the local database without changing
+the deployed site's configuration.
 
-## Use the application
+You can check the local API directly at
+<http://localhost:8080/api/recipes>. If the page cannot load recipes, make
+sure PostgreSQL and the backend are running and that the local settings point
+to the `recipe_archive` database.
 
-- Browse, search, and filter the seeded recipes from the main screen.
-- Select **Edit Recipes**, enter the admin password from `application.properties`, and use the admin screen to add, edit, or delete recipes.
-- The API supports recipe and category reads plus password-protected recipe management. The detailed endpoint list is in [backend/README.md](backend/README.md).
+## Tests
 
-## Run the tests
-
-From the project root:
+From the repository root:
 
 ```bash
 cd backend
 mvn test
 ```
 
-The tests use Spring MVC test support and mocked repositories, so they do not require PostgreSQL to be running.
+The controller tests use mocked repositories, so PostgreSQL does not need to
+be running to execute the tests.
 
-## Project structure
+## Render deployment
 
-```text
-personal-recipe-archive/
-├── README.md                         # Installation and run instructions
-├── backend/
-│   ├── pom.xml                       # Java dependencies and build configuration
-│   ├── reset_and_seed_data.sql       # Demo database data
-│   └── src/
-│       ├── main/java/                # Spring Boot application, API, entities, repositories
-│       ├── main/resources/
-│       │   └── application.properties.example
-│       └── test/java/                # Controller tests
-└── frontend/
-    ├── index.html
-    ├── app.js
-    └── style.css
-```
+The committed
+[`backend/src/main/resources/application-prod.properties`](backend/src/main/resources/application-prod.properties)
+uses environment variables rather than committed credentials. Configure these
+in the Render backend service:
+
+- `SPRING_PROFILES_ACTIVE=prod`
+- `SPRING_DATASOURCE_URL`
+- `SPRING_DATASOURCE_USERNAME`
+- `SPRING_DATASOURCE_PASSWORD`
+- `ADMIN_PASSWORD`
+
+Keep these values private and do not put production credentials in the
+repository or in frontend JavaScript. The hosted backend uses its own
+database; local changes do not update it.
+
+## Dockerfile
+
+[`backend/Dockerfile`](backend/Dockerfile) builds a container image for the
+backend. It does not create or run PostgreSQL and does not serve the frontend.
+Docker is **not required** for the local setup above. Keep the file if the
+Render backend is configured to deploy from a Dockerfile; otherwise it is
+optional and can be removed separately.
+
+## Project notes
+
+- Categories are a fixed set loaded by the demo data script.
+- Admin editing uses one shared password, not individual accounts or
+  production-grade authentication. It is suitable for a small demo, not for
+  protecting sensitive data.
+- The backend API is under `http://localhost:8080/api` when run locally.

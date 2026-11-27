@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Text displayed in the browser tab. -->
-    <title>Personal Recipe Archive</title>
+    <title>My Personal Recipe Archive</title>
 
     <!-- Connects this HTML file to the external CSS stylesheet. -->
     <link rel="stylesheet" href="style.css">
@@ -27,12 +27,12 @@
     <header id="main-header">
 
         <!-- Main heading displayed on the page. -->
-        <h1>Personal Recipe Archive</h1>
+        <h1>My Personal Recipe Archive</h1>
 
         <!-- A quote displayed underneath the main title.
              app.js can update this element dynamically. -->
         <blockquote id="motivational-quote">
-            "This is a where you will see a motivational quote." — Unknown
+            Strive for progress, not perfection.
         </blockquote>
 
     </header>
@@ -48,7 +48,7 @@
 
         <!-- Displays the current connection status between the
              frontend and the backend/API. -->
-        <div id="connection-status">Connecting...</div>
+        <div id="connection-status">Connecting to recipe API...</div>
 
 
         <!-- =====================================================
@@ -62,14 +62,18 @@
             <!-- Search section containing the recipe search bar. -->
             <section id="search-section">
 
-                <!-- Text input used to search recipes.
-                     app.js reads the value entered here and sends
-                     it to the backend search endpoint. -->
-                <input 
-                    type="text" 
-                    id="search-bar" 
-                    placeholder="search..."
-                >
+                <div id="search-input-wrapper">
+                    <!-- Text input used to search recipes.
+                         app.js reads the value entered here and sends
+                         it to the backend search endpoint. -->
+                    <input
+                        type="text"
+                        id="search-bar"
+                        placeholder="search..."
+                        aria-label="Search recipes"
+                    >
+                    <button id="clear-search-btn" type="button" aria-label="Clear search" title="Clear search" class="hidden">&times;</button>
+                </div>
 
             </section>
 
@@ -134,12 +138,18 @@
                 <!-- app.js inserts the selected recipe's title here. -->
                 <h2 id="detail-title"></h2>
 
+                <div id="detail-actions">
+                    <button id="preview-back-btn" class="detail-action-btn hidden">Back to editing</button>
+                    <button id="preview-save-btn" class="detail-action-btn hidden">Save Recipe</button>
+                </div>
+
                 <!-- Button used to close the recipe detail view.
                      &times; displays the × symbol. -->
                 <button id="back-btn" aria-label="Close recipe">&times;</button>
 
             </div>
 
+            <p id="preview-notice" class="hidden">Preview — these changes haven't been saved yet.</p>
 
             <!-- Contains all of the information about the selected recipe. -->
             <div id="detail-body">
@@ -234,7 +244,101 @@
 
             </div>
 
+            <div id="detail-footer-actions" class="hidden">
+                <button id="conversion-open-btn" class="detail-action-btn">Conversion Calculator</button>
+                <button id="detail-edit-btn" class="detail-action-btn">Edit Recipe</button>
+            </div>
+
         </section>
+
+        <div id="conversion-modal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="conversion-modal-title">
+            <section id="conversion-dialog">
+                <div id="conversion-modal-header">
+                    <h2 id="conversion-modal-title">Conversion Calculator</h2>
+                    <button id="conversion-close-btn" type="button" aria-label="Close conversion calculator">&times;</button>
+                </div>
+
+                <div id="conversion-modal-content">
+                    <section class="conversion-group">
+                        <h3>Temperature</h3>
+                        <div class="conversion-row">
+                            <div class="conversion-value">
+                                <label for="temperature-f">Fahrenheit (°F)</label>
+                                <input id="temperature-f" class="conversion-input" type="number" step="any" inputmode="decimal" placeholder="°F">
+                            </div>
+                            <span class="conversion-equals" aria-hidden="true">↔</span>
+                            <div class="conversion-value">
+                                <label for="temperature-c">Celsius (°C)</label>
+                                <input id="temperature-c" class="conversion-input" type="number" step="any" inputmode="decimal" placeholder="°C">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="conversion-group">
+                        <h3>Volume</h3>
+                        <div class="conversion-row">
+                            <div class="conversion-value">
+                                <label for="volume-tsp">Teaspoons (tsp)</label>
+                                <input id="volume-tsp" class="conversion-input" data-conversion-peer="volume-tsp-ml" data-conversion-factor="5" data-conversion-direction="forward" type="number" step="any" inputmode="decimal" placeholder="tsp">
+                            </div>
+                            <span class="conversion-equals" aria-hidden="true">=</span>
+                            <div class="conversion-value">
+                                <label for="volume-tsp-ml">Milliliters (ml)</label>
+                                <input id="volume-tsp-ml" class="conversion-input" data-conversion-peer="volume-tsp" data-conversion-factor="5" data-conversion-direction="reverse" type="number" step="any" inputmode="decimal" placeholder="ml">
+                            </div>
+                        </div>
+                        <div class="conversion-row">
+                            <div class="conversion-value">
+                                <label for="volume-tbsp">Tablespoons (tbsp)</label>
+                                <input id="volume-tbsp" class="conversion-input" data-conversion-peer="volume-tbsp-ml" data-conversion-factor="15" data-conversion-direction="forward" type="number" step="any" inputmode="decimal" placeholder="tbsp">
+                            </div>
+                            <span class="conversion-equals" aria-hidden="true">=</span>
+                            <div class="conversion-value">
+                                <label for="volume-tbsp-ml">Milliliters (ml)</label>
+                                <input id="volume-tbsp-ml" class="conversion-input" data-conversion-peer="volume-tbsp" data-conversion-factor="15" data-conversion-direction="reverse" type="number" step="any" inputmode="decimal" placeholder="ml">
+                            </div>
+                        </div>
+                        <div class="conversion-row">
+                            <div class="conversion-value">
+                                <label for="volume-floz">Fluid ounces (fl oz)</label>
+                                <input id="volume-floz" class="conversion-input" data-conversion-peer="volume-floz-ml" data-conversion-factor="30" data-conversion-direction="forward" type="number" step="any" inputmode="decimal" placeholder="fl oz">
+                            </div>
+                            <span class="conversion-equals" aria-hidden="true">=</span>
+                            <div class="conversion-value">
+                                <label for="volume-floz-ml">Milliliters (ml)</label>
+                                <input id="volume-floz-ml" class="conversion-input" data-conversion-peer="volume-floz" data-conversion-factor="30" data-conversion-direction="reverse" type="number" step="any" inputmode="decimal" placeholder="ml">
+                            </div>
+                        </div>
+                        <div class="conversion-row">
+                            <div class="conversion-value">
+                                <label for="volume-cups">US cups</label>
+                                <input id="volume-cups" class="conversion-input" data-conversion-peer="volume-cups-ml" data-conversion-factor="240" data-conversion-direction="forward" type="number" step="any" inputmode="decimal" placeholder="cups">
+                            </div>
+                            <span class="conversion-equals" aria-hidden="true">=</span>
+                            <div class="conversion-value">
+                                <label for="volume-cups-ml">Milliliters (ml)</label>
+                                <input id="volume-cups-ml" class="conversion-input" data-conversion-peer="volume-cups" data-conversion-factor="240" data-conversion-direction="reverse" type="number" step="any" inputmode="decimal" placeholder="ml">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="conversion-group">
+                        <h3>Weight (Mass)</h3>
+                        <div class="conversion-row">
+                            <div class="conversion-value">
+                                <label for="weight-oz">Ounces (oz)</label>
+                                <input id="weight-oz" class="conversion-input" data-conversion-peer="weight-oz-g" data-conversion-factor="28.35" data-conversion-direction="forward" type="number" step="any" inputmode="decimal" placeholder="oz">
+                            </div>
+                            <span class="conversion-equals" aria-hidden="true">=</span>
+                            <div class="conversion-value">
+                                <label for="weight-oz-g">Grams (g)</label>
+                                <input id="weight-oz-g" class="conversion-input" data-conversion-peer="weight-oz" data-conversion-factor="28.35" data-conversion-direction="reverse" type="number" step="any" inputmode="decimal" placeholder="g">
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </section>
+        </div>
 
 
         <!-- =========================================================
@@ -421,6 +525,9 @@
 
             <!-- Contains the Save and Cancel buttons. -->
             <div id="admin-form-buttons">
+
+                <!-- Previews the current form values without saving them. -->
+                <button id="form-preview-btn">Preview</button>
 
                 <!-- Saves the new recipe or changes to an existing recipe. -->
                 <button id="form-save-btn">Save</button>
